@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fffafd">
+  <title>拾色 - 写生配色</title>
+  <style>
+    :root{--ink:#211d20;--muted:#898187;--line:#eee8ec;--pink:#e8b9d2;--pink-strong:#cf82ad;--pink-pale:#f9edf4;--paper:#fffafd;--shadow:0 14px 36px #50354912}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#f6f1f4;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+    body{font-size:14px}button,input,select{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--pink-strong);outline-offset:3px}
+    .app{width:min(100%,480px);min-height:100dvh;margin:auto;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 0 60px #35252f0b}
+    .topbar{height:62px;padding:0 23px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f5eef2;background:#fffafd}
+    .brand{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:650;letter-spacing:0}.brand-mark{width:23px;height:23px;border:1.5px solid #332d31;border-radius:50%;display:grid;place-items:center;position:relative}.brand-mark:before{content:"";width:12px;height:12px;background:#e9bdd4;border-radius:50%;transform:translate(-2px,2px);box-shadow:4px -3px 0 #f4d9e8}
+    .top-action{border:0;background:none;width:36px;height:36px;border-radius:50%;font-size:19px}
+    main{padding:0 23px 105px;min-height:calc(100dvh - 62px)}
+    .view{display:none;animation:appear .22s ease}.view.active{display:block}@keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .home{min-height:calc(100dvh - 167px);display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(35px,9vh,82px) 5px 20px}
+    .eyebrow{font-size:10px;letter-spacing:2px;color:#a38f9b;font-weight:650}
+    .hero-art{width:180px;height:180px;margin:clamp(34px,8vh,76px) auto 29px;position:relative;display:grid;place-items:center}
+    .hero-orbit{position:absolute;width:158px;height:158px;border:1px solid #2b2529;border-radius:50%;transform:rotate(-13deg)}
+    .orb{position:absolute;width:94px;height:94px;border-radius:50%;background:#edc9dc;box-shadow:10px 5px 0 #f7e6ef;transform:translate(-8px,-7px)}
+    .orb:after{content:"";position:absolute;width:31px;height:31px;right:-21px;top:6px;border-radius:50%;background:#fff8fc;border:1px solid #332c31}
+    .spark{position:absolute;right:16px;top:11px;font-size:23px;color:#292328}
+    h1{font-size:29px;line-height:1.4;letter-spacing:0;font-weight:570;margin:0}
+    .intro{font-size:13px;color:var(--muted);line-height:1.9;margin:10px 0 0}
+    .dots{display:flex;gap:10px;margin:27px 0 0}.dots i{width:7px;height:7px;border-radius:50%;background:#eadfe6}.dots i:first-child{background:#252025;width:8px;height:8px}
+    .add-photo{width:112px;height:112px;border-radius:50%;border:1px solid #302a2f;background:#fffafd;margin:clamp(32px,7vh,68px) auto 0;display:grid;place-items:center;box-shadow:inset 0 0 0 7px #f9f0f5;transition:transform .18s,background .18s}
+    .add-photo:hover{transform:scale(1.04);background:#fff4fa}.add-photo span{font-size:45px;font-weight:200;line-height:1;margin-top:-4px}
+    .add-caption{font-size:11px;color:var(--muted);margin-top:12px}
+    .home-bottom{margin-top:auto;padding-top:30px;display:flex;align-items:center;gap:7px;color:#a39aa0;font-size:11px}.home-bottom i{width:5px;height:5px;background:#df9fc1;border-radius:50%}
+    .page-head{padding:27px 0 18px;display:flex;align-items:flex-start;justify-content:space-between}.page-head h1{font-size:24px}.page-head p{margin:5px 0 0;color:var(--muted);font-size:12px}
+    .icon-button{width:38px;height:38px;border:1px solid var(--line);background:white;border-radius:50%;font-size:19px}
+    .photo-panel{height:min(54vh,440px);min-height:290px;border:1px solid #eee5eb;border-radius:4px;background:#faf5f8;position:relative;overflow:hidden;display:grid;place-items:center}
+    .photo-panel img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}.photo-panel.has-image{background:#eee8ec;cursor:crosshair}
+    .photo-placeholder{text-align:center;padding:24px}.photo-placeholder .upload-symbol{font-size:42px;font-weight:200;color:#d591b6}.photo-placeholder strong{display:block;font-size:14px;font-weight:550;margin:12px 0 6px}.photo-placeholder span{color:var(--muted);font-size:11px;line-height:1.7}
+    .sample-marker{position:absolute;z-index:2;width:20px;height:20px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 1px #30282f,0 2px 8px #0003;transform:translate(-50%,-50%);display:none;pointer-events:none}.has-image .sample-marker{display:block}
+    .sample-readout{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}.sample-swatch{width:42px;height:42px;border-radius:50%;border:1px solid #282328;flex:none;background:#e5b8d0}.sample-readout strong{font-size:13px;font-weight:550;display:block}.sample-readout small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.sample-readout button{margin-left:auto;border:0;background:none;color:#a46b8b;font-size:11px}
+    .button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.primary,.secondary{height:46px;border-radius:3px;font-weight:550}.primary{border:1px solid var(--ink);background:var(--ink);color:white}.primary:hover{background:#40333b}.secondary{border:1px solid #e7dce3;background:white}
+    .medium-switch{display:flex;padding:3px;background:#f5eff3;border-radius:4px;gap:2px}.medium-switch button{flex:1;height:34px;border:0;background:transparent;border-radius:3px;color:#827881;font-size:12px}.medium-switch button.active{background:#fff;color:#2b242a;box-shadow:0 1px 4px #34232c12}
+    .result-colors{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:8px 0 20px}.color-sample{height:107px;border:1px solid #282328;border-radius:50%;background:#e7b6d0;position:relative;overflow:hidden}.color-sample:after{content:"";position:absolute;inset:5px -4px -5px 7px;border:1px solid #292328;border-radius:50%;opacity:.75}
+    .color-label{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:11px}.color-label small{color:var(--muted);font:10px ui-monospace,monospace}
+    .section-title{font-size:15px;font-weight:570;margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center}.section-title small{font-size:10px;color:var(--muted);font-weight:400}
+    .recipe-box{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0}.recipe-row{display:grid;grid-template-columns:14px 1fr 100px 38px;gap:9px;align-items:center;padding:9px 0}.pigment-dot{width:12px;height:12px;border:1px solid #0001;border-radius:50%;background:var(--c)}.recipe-name{font-size:12px}.bar{height:4px;background:#f0eaf0;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:var(--p);background:var(--c)}.percent{text-align:right;font-size:11px;color:#746b72}
+    .note{font-size:10px;color:#988d95;line-height:1.7;margin:11px 0}.feedback{padding:14px 0 4px}.feedback p{font-size:12px;margin:0 0 10px}.feedback-options{display:flex;gap:7px;flex-wrap:wrap}.feedback-options button{border:1px solid #ebdfe7;background:white;border-radius:18px;padding:8px 11px;font-size:11px}.feedback-options button:active{background:var(--pink-pale);border-color:var(--pink-strong)}.adjust-note{font-size:11px;color:#95617c;line-height:1.7;margin-top:12px;display:none}
+    .record-list,.pigment-list{border-top:1px solid var(--line)}.record-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}.record-color{height:44px;width:44px;border:1px solid #292328;border-radius:50%;background:var(--c)}.record-item strong{font-size:12px;font-weight:550;display:block}.record-item small{font-size:10px;color:var(--muted);display:block;margin-top:5px}.record-item time{font-size:10px;color:#a69ba2}
+    .tools{display:flex;gap:8px;margin:4px 0 14px}.search{height:39px;flex:1;min-width:0;padding:0 12px;border:1px solid var(--line);background:white;border-radius:3px;font-size:12px}.add-btn{height:39px;width:40px;border:1px solid var(--ink);background:white;border-radius:3px;font-size:20px;font-weight:300}
+    .pigment-item{display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid var(--line)}.pigment-item input{accent-color:#c97da6}.pigment-chip{width:25px;height:25px;border:1px solid #211d2015;border-radius:50%;background:var(--c)}.pigment-info{flex:1}.pigment-info strong{display:block;font-size:12px;font-weight:500}.pigment-info small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.count{font-size:10px;color:var(--muted)}
+    .empty{font-size:12px;text-align:center;padding:40px 15px;color:var(--muted);line-height:1.8}.toast{position:fixed;bottom:86px;left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;background:#2b242a;color:white;padding:11px 16px;border-radius:3px;font-size:12px;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:69px;padding-bottom:env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);background:#fffafdF2;backdrop-filter:blur(12px);z-index:5}.bottom-nav button{min-width:62px;border:0;background:none;color:#a49aa1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px}.bottom-nav button.active{color:#342a31}.nav-icon{font-size:20px;line-height:1}
+    .modal-backdrop{position:fixed;inset:0;background:#28202766;display:none;place-items:end center;z-index:15;padding:14px}.modal-backdrop.open{display:grid}.modal{width:min(100%,452px);background:#fffafd;padding:22px;border-radius:5px}.modal h2{font-size:18px;font-weight:550;margin:0 0 18px}.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:11px;color:var(--muted)}.field input{height:42px;border:1px solid var(--line);padding:0 11px;background:white}.field input[type=color]{padding:4px;width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.modal-actions button{padding:10px 14px}
+    @media(min-width:700px){body{padding:18px 0}.app{min-height:calc(100dvh - 36px);border-radius:5px}.home{min-height:calc(100dvh - 203px)}.bottom-nav{bottom:0}.toast{bottom:100px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><i class="brand-mark"></i><span>拾色</span></div>
+    <button class="top-action" id="backButton" aria-label="返回上一页" hidden>‹</button>
+    <span id="modeLabel" style="font-size:10px;color:#9c9299">本地创作</span>
+  </header>
+  <main>
+    <section class="view active" id="view-home">
+      <div class="home">
+        <div class="eyebrow">COLOR NOTES · 01</div>
+        <div class="hero-art" aria-hidden="true"><div class="hero-orbit"></div><div class="orb"></div><span class="spark">✦</span></div>
+        <h1>留住眼前的颜色</h1>
+        <p class="intro">从照片里取一抹颜色，<br>用手边的颜料慢慢调出来。</p>
+        <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="add-photo" id="homeUpload" aria-label="从相册添加照片"><span>+</span></button>
+        <div class="add-caption">从相册选择一张照片</div>
+        <div class="home-bottom"><i></i><span id="homeSaved">从一张照片开始你的配色记录</span></div>
+      </div>
+    </section>
+    <section class="view" id="view-sample">
+      <div class="page-head"><div><h1>选取颜色</h1><p>轻点照片，选择你想调出的颜色</p></div><button class="icon-button" id="replacePhoto" aria-label="更换照片">↻</button></div>
+      <div class="photo-panel" id="photoPanel">
+        <div class="photo-placeholder" id="placeholder"><div class="upload-symbol">＋</div><strong>选择一张写生参考照片</strong><span>支持 JPG、PNG 等常见图片格式</span></div>
+        <img id="photo" alt="用于取色的照片" hidden><i class="sample-marker" id="sampleMarker"></i>
+      </div>
+      <input id="fileInput" type="file" accept="image/*" hidden>
+      <div class="sample-readout"><i class="sample-swatch" id="targetSwatch"></i><span><strong>当前取样色</strong><small id="targetHex">#E5B8D0</small></span><button id="copyHex">复制色值</button></div>
+      <div class="button-row"><button class="secondary" id="sampleAgain">重新选择</button><button class="primary" id="showRecipe">查看配方　→</button></div>
+      <p class="note">屏幕颜色会受光线与设备影响，配方仅作实际试调参考。</p>
+    </section>
+    <section class="view" id="view-result">
+      <div class="page-head"><div><h1>调出这抹颜色</h1><p>根据你携带的颜料估算配方</p></div><button class="icon-button" id="resultCopy" aria-label="复制目标色值">⧉</button></div>
+      <div class="medium-switch" id="mediumSwitch"><button class="active" data-medium="水彩">水彩</button><button data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button></div>
+      <div class="result-colors"><div><div class="color-sample" id="targetLarge"></div><div class="color-label"><span>目标颜色</span><small id="targetCode">#E5B8D0</small></div></div><div><div class="color-sample" id="mixSwatch" style="background:#d8a6c1"></div><div class="color-label"><span>混合预览</span><small id="mixHex">#D8A6C1</small></div></div></div>
+      <div class="section-title">推荐配方 <small>估算 · 约 82% 接近</small></div>
+      <div class="recipe-box" id="recipeList"></div>
+      <div class="note">先少量试调，再逐步靠近目标色。实际颜料效果受品牌、用量和干湿影响。</div>
+      <div class="button-row"><button class="secondary" id="openPigments">管理颜料</button><button class="primary" id="saveRecipe">♡　保存配方</button></div>
+      <div class="feedback"><p>实际试色后，颜色有什么不同？</p><div class="feedback-options" id="feedbackButtons"><button data-feedback="偏黄">偏黄</button><button data-feedback="偏红">偏红</button><button data-feedback="偏蓝">偏蓝</button><button data-feedback="太深">太深</button><button data-feedback="太浅">太浅</button><button data-feedback="太灰">太灰</button><button data-feedback="更接近">更接近</button></div><div class="adjust-note" id="adjustNote"></div></div>
+    </section>
+    <section class="view" id="view-saved">
+      <div class="page-head"><div><h1>配色记录</h1><p>保存过的颜色与混合比例</p></div><span class="count" id="savedCount"></span></div>
+      <div class="record-list" id="savedList"></div>
+    </section>
+    <section class="view" id="view-pigments">
+      <div class="page-head"><div><h1>我的颜料</h1><p>勾选本次写生携带的颜色</p></div><span class="count" id="pigmentCount"></span></div>
+      <div class="medium-switch" id="pigmentMedium"><button class="active" data-medium="水彩">水彩</button><button data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button></div>
+      <div class="tools"><input class="search" id="searchPigments" placeholder="搜索颜料名称"><button class="add-btn" id="addPigment" aria-label="添加自定义颜料">+</button></div>
+      <div class="pigment-list" id="pigmentList"></div>
+      <p class="note">配方只会使用当前媒介下已勾选的颜料。</p>
+    </section>
+  </main>
+  <nav class="bottom-nav" aria-label="主导航">
+    <button class="active" data-view="home"><span class="nav-icon">◉</span>首页</button>
+    <button data-view="saved"><span class="nav-icon">▤</span>记录</button>
+    <button data-view="pigments"><span class="nav-icon">◌</span>颜料</button>
+  </nav>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="modal-backdrop" id="modal"><form class="modal" id="pigmentForm"><h2>添加自定义颜料</h2><div class="field"><label for="newName">颜料名称</label><input id="newName" required placeholder="例如：青莲"></div><div class="field"><label for="newColor">颜色预览</label><input id="newColor" type="color" value="#c77da6"></div><div class="modal-actions"><button type="button" class="secondary" id="cancelModal">取消</button><button class="primary">添加</button></div></form></div>
+<script>
+(()=>{
+  const seed=[
+    {id:"ultra",name:"群青",color:"#46577d",type:"蓝色",media:["水彩","丙烯","油画"]},
+    {id:"cerulean",name:"天蓝",color:"#7ca8b4",type:"蓝色",media:["水彩","丙烯","油画"]},
+    {id:"lemon",name:"柠檬黄",color:"#e6d66b",type:"黄色",media:["水彩","丙烯","油画"]},
+    {id:"ochre",name:"黄赭",color:"#bb8d4d",type:"黄色",media:["水彩","丙烯","油画"]},
+    {id:"sienna",name:"熟褐",color:"#9c5c45",type:"红棕色",media:["水彩","丙烯","油画"]},
+    {id:"alizarin",name:"曙红",color:"#a94f61",type:"红色",media:["水彩","丙烯","油画"]},
+    {id:"viridian",name:"翠绿",color:"#5e896a",type:"绿色",media:["水彩","丙烯","油画"]},
+    {id:"sap",name:"草绿",color:"#78934c",type:"绿色",media:["水彩","丙烯","油画"]},
+    {id:"white",name:"钛白",color:"#f1eee2",type:"白色",media:["丙烯","油画"]},
+    {id:"black",name:"象牙黑",color:"#454742",type:"黑色",media:["丙烯","油画"]}
+  ];
+  const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+  const read=(k,d)=>{try{return JSON.parse(localStorage.getItem("shise-"+k))??d}catch{return d}};
+  const state={view:"home",medium:"水彩",target:"#E5B8D0",photoUrl:"",custom:[],feedback:0};
+  state.custom=read("custom",[]);
+  let saved=read("saved",[]);
+  let checked=read("checkedByMedium",{水彩:["ultra","ochre","sienna","alizarin"],丙烯:["ultra","lemon","alizarin","white"],油画:["ultra","ochre","sienna","white"]});
+  let recipe=[];
+  const all=()=>[...seed,...state.custom], activeIds=()=>checked[state.medium]||[];
+  const rgb=h=>{const v=h.replace("#","");return [0,2,4].map(i=>parseInt(v.slice(i,i+2),16))};
+  const hex=a=>"#"+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0")).join("").toUpperCase();
+  const mix=arr=>{const total=arr.reduce((n,p)=>n+p.pct,0)||1;return hex([0,1,2].map(i=>arr.reduce((n,p)=>n+rgb(p.color)[i]*p.pct,0)/total))};
+  function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2000)}
+  function navigate(view){state.view=view;$$(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+view));$$(".bottom-nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("#backButton").hidden=view==="home"||view==="saved"||view==="pigments";window.scrollTo({top:0,behavior:"smooth"});if(view==="saved")renderSaved();if(view==="pigments")renderPigments()}
+  function renderPigments(){const q=$("#searchPigments").value.trim().toLowerCase();const list=all().filter(p=>p.media.includes(state.medium)&&p.name.toLowerCase().includes(q));$("#pigmentList").innerHTML=list.map(p=>`<label class="pigment-item"><input type="checkbox" data-id="${p.id}" ${activeIds().includes(p.id)?"checked":""}><i class="pigment-chip" style="--c:${p.color}"></i><span class="pigment-info"><strong>${p.name}</strong><small>${p.type}</small></span></label>`).join("")||'<div class="empty">没有找到颜料</div>';$("#pigmentCount").textContent=`${activeIds().length} 种已携带`;$$("[data-medium]",$("#pigmentMedium")).forEach(b=>b.classList.toggle("active",b.dataset.medium===state.medium))}
+  function renderRecipe(){const candidates=activeIds().map(id=>all().find(p=>p.id===id)).filter(Boolean).sort((a,b)=>rgb(a.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0)-rgb(b.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0)).slice(0,Math.min(3,activeIds().length));if(!candidates.length){recipe=[];$("#recipeList").innerHTML='<div class="empty">还没有选择颜料。<br>先到颜料页勾选本次携带的颜色。</div>';$("#mixHex").textContent="—";$("#mixSwatch").style.background="#f1e9ef";return}
+    let weights=candidates.map(p=>1/Math.max(30,Math.sqrt(rgb(p.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0))));if(state.feedback%2&&weights.length>1)weights[0]*=1.35;const sum=weights.reduce((a,b)=>a+b,0);recipe=candidates.map((p,i)=>({id:p.id,name:p.name,color:p.color,pct:Math.round(weights[i]/sum*100)}));recipe[0].pct+=100-recipe.reduce((n,p)=>n+p.pct,0);
+    $("#recipeList").innerHTML=recipe.map(p=>`<div class="recipe-row"><i class="pigment-dot" style="--c:${p.color}"></i><span class="recipe-name">${p.name}</span><span class="bar"><i style="--p:${p.pct}%;--c:${p.color}"></i></span><span class="percent">${p.pct}%</span></div>`).join("");$("#mixHex").textContent=mix(recipe);$("#mixSwatch").style.background=mix(recipe)}
+  function updateTarget(h){state.target=h.toUpperCase();state.feedback=0;$("#targetSwatch").style.background=state.target;$("#targetHex").textContent=state.target;$("#targetLarge").style.background=state.target;$("#targetCode").textContent=state.target;$("#sampleMarker").style.background=state.target;renderRecipe()}
+  function renderSaved(){$("#savedCount").textContent=`${saved.length} 条`;$("#homeSaved").textContent=saved.length?`已经收藏 ${saved.length} 份配色记录`:"从一张照片开始你的配色记录";$("#savedList").innerHTML=saved.length?saved.map((s,i)=>`<div class="record-item" data-saved="${i}"><i class="record-color" style="--c:${s.target}"></i><span><strong>${s.name}</strong><small>${s.medium} · ${s.recipe.map(p=>p.name).join("、")}</small></span><time>${s.date}</time></div>`).join(""):'<div class="empty">还没有配色记录<br>保存的配方会留在这里</div>'}
+  $("#homeUpload").onclick=()=>$("#fileInput").click();$("#replacePhoto").onclick=()=>$("#fileInput").click();$("#sampleAgain").onclick=()=>$("#fileInput").click();
+  $("#fileInput").onchange=e=>{const f=e.target.files[0];if(!f)return;if(state.photoUrl)URL.revokeObjectURL(state.photoUrl);state.photoUrl=URL.createObjectURL(f);const img=$("#photo");img.src=state.photoUrl;img.hidden=false;$("#placeholder").hidden=true;$("#photoPanel").classList.add("has-image");img.onload=()=>{sampleAt(.5,.5);navigate("sample");toast("照片已载入，点击画面取色")}};
+  function sampleAt(x,y){const panel=$("#photoPanel"),img=$("#photo"),rect=panel.getBoundingClientRect();$("#sampleMarker").style.left=`${x*rect.width}px`;$("#sampleMarker").style.top=`${y*rect.height}px`;try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);const scale=Math.min(rect.width/c.width,rect.height/c.height),w=c.width*scale,h=c.height*scale,ox=(rect.width-w)/2,oy=(rect.height-h)/2,px=Math.max(0,Math.min(c.width-1,Math.floor((x*rect.width-ox)/scale))),py=Math.max(0,Math.min(c.height-1,Math.floor((y*rect.height-oy)/scale))),d=ctx.getImageData(px,py,1,1).data;updateTarget(hex([d[0],d[1],d[2]]))}catch{toast("无法读取图片颜色，请重新选择")}}
+  $("#photoPanel").onclick=e=>{if(!state.photoUrl)return;const r=e.currentTarget.getBoundingClientRect();sampleAt((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)};
+  $("#showRecipe").onclick=()=>{renderRecipe();navigate("result")};
+  $("#mediumSwitch").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;$$("[data-medium]",$("#mediumSwitch")).forEach(x=>x.classList.toggle("active",x===b));renderRecipe()};
+  $("#pigmentMedium").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;renderPigments();renderRecipe()};
+  $("#pigmentList").onchange=e=>{const input=e.target.closest("[data-id]");if(!input)return;const ids=new Set(activeIds());input.checked?ids.add(input.dataset.id):ids.delete(input.dataset.id);checked[state.medium]=[...ids];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));renderPigments();renderRecipe()};
+  $("#searchPigments").oninput=renderPigments;$("#openPigments").onclick=()=>navigate("pigments");
+  $("#feedbackButtons").onclick=e=>{const b=e.target.closest("[data-feedback]");if(!b)return;state.feedback++;renderRecipe();const advice={"偏黄":"建议减少暖黄色，少量加入群青或天蓝，再观察色相。","偏红":"建议减少曙红或熟褐，逐步加入少量冷色。","偏蓝":"试着加入少量黄赭或柠檬黄，让颜色回暖。","太深":"少量增加浅色颜料；水彩可先尝试增加水量。","太浅":"少量增加深色或着色力较强的颜料。","太灰":"减少互补色叠加，再加入少量目标色倾向的纯色。","更接近":"已记录反馈，可以继续微调或保存当前配方。"};$("#adjustNote").textContent=advice[b.dataset.feedback];$("#adjustNote").style.display="block"};
+  $("#saveRecipe").onclick=()=>{if(!recipe.length){toast("先选择可用颜料再生成配方");return}saved.unshift({name:`写生色 ${saved.length+1}`,date:new Date().toLocaleDateString("zh-CN",{month:"2-digit",day:"2-digit"}),medium:state.medium,target:state.target,recipe:recipe.map(p=>({...p}))});localStorage.setItem("shise-saved",JSON.stringify(saved));renderSaved();toast("已保存在本机")};
+  async function copy(){try{await navigator.clipboard.writeText(state.target);toast("色值已复制")}catch{toast(state.target)}}$("#copyHex").onclick=copy;$("#resultCopy").onclick=copy;
+  $("#savedList").onclick=e=>{const row=e.target.closest("[data-saved]");if(!row)return;const item=saved[Number(row.dataset.saved)];if(!item)return;state.medium=item.medium;updateTarget(item.target);recipe=item.recipe;$("#mixSwatch").style.background=mix(recipe);$("#mixHex").textContent=mix(recipe);$("#recipeList").innerHTML=recipe.map(p=>`<div class="recipe-row"><i class="pigment-dot" style="--c:${p.color}"></i><span class="recipe-name">${p.name}</span><span class="bar"><i style="--p:${p.pct}%;--c:${p.color}"></i></span><span class="percent">${p.pct}%</span></div>`).join("");navigate("result")};
+  $$("[data-view]").forEach(b=>b.onclick=()=>navigate(b.dataset.view));$("#backButton").onclick=()=>navigate(state.photoUrl?"sample":"home");
+  $("#addPigment").onclick=()=>$("#modal").classList.add("open");$("#cancelModal").onclick=()=>$("#modal").classList.remove("open");$("#modal").onclick=e=>{if(e.target.id==="modal")$("#modal").classList.remove("open")};
+  $("#pigmentForm").onsubmit=e=>{e.preventDefault();const p={id:"custom-"+Date.now(),name:$("#newName").value.trim(),color:$("#newColor").value,type:"自定义",media:["水彩","丙烯","油画"]};state.custom.push(p);localStorage.setItem("shise-custom",JSON.stringify(state.custom));checked[state.medium]=[...activeIds(),p.id];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));e.target.reset();$("#modal").classList.remove("open");renderPigments();renderRecipe();toast("颜料已添加")};
+  renderPigments();renderSaved();renderRecipe();updateTarget(state.target);
+})();
+</script>
+</body>
+</html>
