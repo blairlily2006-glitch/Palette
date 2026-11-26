@@ -3,96 +3,321 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#fffafd">
-  <title>拾色 - 写生配色</title>
+  <meta name="theme-color" content="#183b32">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <title>调色盘 - 把自然调进画布</title>
   <style>
-    :root{--ink:#211d20;--muted:#898187;--line:#eee8ec;--pink:#e8b9d2;--pink-strong:#cf82ad;--pink-pale:#f9edf4;--paper:#fffafd;--shadow:0 14px 36px #50354912}
-    *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:#f6f1f4;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
-    body{font-size:14px}button,input,select{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--pink-strong);outline-offset:3px}
-    .app{width:min(100%,480px);min-height:100dvh;margin:auto;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 0 60px #35252f0b}
-    .topbar{height:62px;padding:0 23px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f5eef2;background:#fffafd}
-    .brand{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:650;letter-spacing:0}.brand-mark{width:23px;height:23px;border:1.5px solid #332d31;border-radius:50%;display:grid;place-items:center;position:relative}.brand-mark:before{content:"";width:12px;height:12px;background:#e9bdd4;border-radius:50%;transform:translate(-2px,2px);box-shadow:4px -3px 0 #f4d9e8}
-    .top-action{border:0;background:none;width:36px;height:36px;border-radius:50%;font-size:19px}
-    main{padding:0 23px 105px;min-height:calc(100dvh - 62px)}
-    .view{display:none;animation:appear .22s ease}.view.active{display:block}@keyframes appear{from{opacity:.5;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-    .home{min-height:calc(100dvh - 167px);display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(35px,9vh,82px) 5px 20px}
-    .eyebrow{font-size:10px;letter-spacing:2px;color:#a38f9b;font-weight:650}
-    .hero-art{width:180px;height:180px;margin:clamp(34px,8vh,76px) auto 29px;position:relative;display:grid;place-items:center}
-    .hero-orbit{position:absolute;width:158px;height:158px;border:1px solid #2b2529;border-radius:50%;transform:rotate(-13deg)}
-    .orb{position:absolute;width:94px;height:94px;border-radius:50%;background:#edc9dc;box-shadow:10px 5px 0 #f7e6ef;transform:translate(-8px,-7px)}
-    .orb:after{content:"";position:absolute;width:31px;height:31px;right:-21px;top:6px;border-radius:50%;background:#fff8fc;border:1px solid #332c31}
-    .spark{position:absolute;right:16px;top:11px;font-size:23px;color:#292328}
-    h1{font-size:29px;line-height:1.4;letter-spacing:0;font-weight:570;margin:0}
-    .intro{font-size:13px;color:var(--muted);line-height:1.9;margin:10px 0 0}
-    .dots{display:flex;gap:10px;margin:27px 0 0}.dots i{width:7px;height:7px;border-radius:50%;background:#eadfe6}.dots i:first-child{background:#252025;width:8px;height:8px}
-    .add-photo{width:112px;height:112px;border-radius:50%;border:1px solid #302a2f;background:#fffafd;margin:clamp(32px,7vh,68px) auto 0;display:grid;place-items:center;box-shadow:inset 0 0 0 7px #f9f0f5;transition:transform .18s,background .18s}
-    .add-photo:hover{transform:scale(1.04);background:#fff4fa}.add-photo span{font-size:45px;font-weight:200;line-height:1;margin-top:-4px}
-    .add-caption{font-size:11px;color:var(--muted);margin-top:12px}
-    .home-bottom{margin-top:auto;padding-top:30px;display:flex;align-items:center;gap:7px;color:#a39aa0;font-size:11px}.home-bottom i{width:5px;height:5px;background:#df9fc1;border-radius:50%}
-    .page-head{padding:27px 0 18px;display:flex;align-items:flex-start;justify-content:space-between}.page-head h1{font-size:24px}.page-head p{margin:5px 0 0;color:var(--muted);font-size:12px}
-    .icon-button{width:38px;height:38px;border:1px solid var(--line);background:white;border-radius:50%;font-size:19px}
-    .photo-panel{height:min(54vh,440px);min-height:290px;border:1px solid #eee5eb;border-radius:4px;background:#faf5f8;position:relative;overflow:hidden;display:grid;place-items:center}
-    .photo-panel img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}.photo-panel.has-image{background:#eee8ec;cursor:crosshair}
-    .photo-placeholder{text-align:center;padding:24px}.photo-placeholder .upload-symbol{font-size:42px;font-weight:200;color:#d591b6}.photo-placeholder strong{display:block;font-size:14px;font-weight:550;margin:12px 0 6px}.photo-placeholder span{color:var(--muted);font-size:11px;line-height:1.7}
-    .sample-marker{position:absolute;z-index:2;width:20px;height:20px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 1px #30282f,0 2px 8px #0003;transform:translate(-50%,-50%);display:none;pointer-events:none}.has-image .sample-marker{display:block}
-    .sample-readout{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}.sample-swatch{width:42px;height:42px;border-radius:50%;border:1px solid #282328;flex:none;background:#e5b8d0}.sample-readout strong{font-size:13px;font-weight:550;display:block}.sample-readout small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.sample-readout button{margin-left:auto;border:0;background:none;color:#a46b8b;font-size:11px}
-    .button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.primary,.secondary{height:46px;border-radius:3px;font-weight:550}.primary{border:1px solid var(--ink);background:var(--ink);color:white}.primary:hover{background:#40333b}.secondary{border:1px solid #e7dce3;background:white}
-    .medium-switch{display:flex;padding:3px;background:#f5eff3;border-radius:4px;gap:2px}.medium-switch button{flex:1;height:34px;border:0;background:transparent;border-radius:3px;color:#827881;font-size:12px}.medium-switch button.active{background:#fff;color:#2b242a;box-shadow:0 1px 4px #34232c12}
-    .result-colors{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:8px 0 20px}.color-sample{height:107px;border:1px solid #282328;border-radius:50%;background:#e7b6d0;position:relative;overflow:hidden}.color-sample:after{content:"";position:absolute;inset:5px -4px -5px 7px;border:1px solid #292328;border-radius:50%;opacity:.75}
-    .color-label{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:11px}.color-label small{color:var(--muted);font:10px ui-monospace,monospace}
-    .section-title{font-size:15px;font-weight:570;margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center}.section-title small{font-size:10px;color:var(--muted);font-weight:400}
-    .recipe-box{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0}.recipe-row{display:grid;grid-template-columns:14px 1fr 100px 38px;gap:9px;align-items:center;padding:9px 0}.pigment-dot{width:12px;height:12px;border:1px solid #0001;border-radius:50%;background:var(--c)}.recipe-name{font-size:12px}.bar{height:4px;background:#f0eaf0;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:var(--p);background:var(--c)}.percent{text-align:right;font-size:11px;color:#746b72}
-    .note{font-size:10px;color:#988d95;line-height:1.7;margin:11px 0}.feedback{padding:14px 0 4px}.feedback p{font-size:12px;margin:0 0 10px}.feedback-options{display:flex;gap:7px;flex-wrap:wrap}.feedback-options button{border:1px solid #ebdfe7;background:white;border-radius:18px;padding:8px 11px;font-size:11px}.feedback-options button:active{background:var(--pink-pale);border-color:var(--pink-strong)}.adjust-note{font-size:11px;color:#95617c;line-height:1.7;margin-top:12px;display:none}
-    .record-list,.pigment-list{border-top:1px solid var(--line)}.record-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}.record-color{height:44px;width:44px;border:1px solid #292328;border-radius:50%;background:var(--c)}.record-item strong{font-size:12px;font-weight:550;display:block}.record-item small{font-size:10px;color:var(--muted);display:block;margin-top:5px}.record-item time{font-size:10px;color:#a69ba2}
-    .tools{display:flex;gap:8px;margin:4px 0 14px}.search{height:39px;flex:1;min-width:0;padding:0 12px;border:1px solid var(--line);background:white;border-radius:3px;font-size:12px}.add-btn{height:39px;width:40px;border:1px solid var(--ink);background:white;border-radius:3px;font-size:20px;font-weight:300}
-    .pigment-item{display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid var(--line)}.pigment-item input{accent-color:#c97da6}.pigment-chip{width:25px;height:25px;border:1px solid #211d2015;border-radius:50%;background:var(--c)}.pigment-info{flex:1}.pigment-info strong{display:block;font-size:12px;font-weight:500}.pigment-info small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.count{font-size:10px;color:var(--muted)}
-    .empty{font-size:12px;text-align:center;padding:40px 15px;color:var(--muted);line-height:1.8}.toast{position:fixed;bottom:86px;left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;background:#2b242a;color:white;padding:11px 16px;border-radius:3px;font-size:12px;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
-    .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:69px;padding-bottom:env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);background:#fffafdF2;backdrop-filter:blur(12px);z-index:5}.bottom-nav button{min-width:62px;border:0;background:none;color:#a49aa1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px}.bottom-nav button.active{color:#342a31}.nav-icon{font-size:20px;line-height:1}
-    .modal-backdrop{position:fixed;inset:0;background:#28202766;display:none;place-items:end center;z-index:15;padding:14px}.modal-backdrop.open{display:grid}.modal{width:min(100%,452px);background:#fffafd;padding:22px;border-radius:5px}.modal h2{font-size:18px;font-weight:550;margin:0 0 18px}.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:11px;color:var(--muted)}.field input{height:42px;border:1px solid var(--line);padding:0 11px;background:white}.field input[type=color]{padding:4px;width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.modal-actions button{padding:10px 14px}
-    @media(min-width:700px){body{padding:18px 0}.app{min-height:calc(100dvh - 36px);border-radius:5px}.home{min-height:calc(100dvh - 203px)}.bottom-nav{bottom:0}.toast{bottom:100px}}
+    :root{
+      color-scheme:light;
+      --ink:#202a25;--muted:#78827b;--line:#e4e9e3;--paper:#f8f8f2;--surface:#fffefa;
+      --green:#466b57;--green-deep:#304c3d;--green-pale:#e7eee6;--blue:#a9c3c6;
+      --sprout:#c6d77e;--butter:#e9d99b;--coral:#d88b78;--lavender:#c5bfd3;
+      --glass:rgba(255,255,250,.78);--shadow:0 12px 32px rgba(40,57,45,.09);
+      --font-body:14px;--font-small:11px;--font-title:26px;--font-display:34px;
+      --space-1:6px;--space-2:10px;--space-3:16px;--space-4:24px;--space-5:34px;
+      --radius:6px;--safe-bottom:env(safe-area-inset-bottom,0px)
+    }
+    *{box-sizing:border-box;word-break:keep-all;line-break:strict}
+    html,body{margin:0;min-height:100%;background:#e9ede7;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+    body{font-size:var(--font-body)}button,input,select{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+    .app{width:min(100%,480px);min-height:100dvh;margin:auto;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 0 60px #26372b12}
+    .topbar{height:62px;padding:0 23px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e6eae3;background:var(--paper)}
+    .brand{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:650}.brand-mark{width:24px;height:24px;border:1px solid var(--green);border-radius:50% 50% 43% 57%;display:grid;place-items:center;position:relative;transform:rotate(-20deg)}.brand-mark:before{content:"";width:11px;height:15px;background:var(--sprout);border-radius:80% 15% 75% 20%;transform:rotate(36deg);box-shadow:4px 2px 0 var(--blue)}
+    #modeLabel{font-size:10px!important;color:var(--muted)!important;letter-spacing:.2px}.top-action{border:0;background:none;width:38px;height:38px;border-radius:50%;font-size:22px}
+    main{padding:0 22px calc(112px + var(--safe-bottom));min-height:calc(100dvh - 62px)}
+    .view{display:none;animation:appear .3s ease}.view.active{display:block}@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .home{min-height:calc(100dvh - 174px);display:flex;flex-direction:column;padding:26px 0 18px}
+    .home-kicker,.eyebrow{font-size:10px;letter-spacing:1.3px;color:var(--green);font-weight:650}
+    .home-hero{position:relative;min-height:285px;padding:35px 0 24px;display:flex;flex-direction:column;justify-content:center}
+    .home-hero h1{font-size:var(--font-display);line-height:1.26;font-weight:570;margin:0;max-width:275px;position:relative;z-index:1}
+    .home-hero .intro{font-size:13px;color:var(--muted);line-height:1.8;margin:12px 0 0;max-width:230px;position:relative;z-index:1}
+    .hero-art{position:absolute;right:-2px;top:27px;width:162px;height:195px;pointer-events:none}
+    .hero-orbit{position:absolute;width:131px;height:131px;right:6px;top:27px;border:1px solid #78917f9c;border-radius:47% 53% 52% 48%;transform:rotate(26deg)}
+    .orb{position:absolute;width:96px;height:120px;right:20px;top:30px;border-radius:52% 48% 38% 62% / 55% 45% 55% 45%;background:linear-gradient(145deg,#dbe5c1 5%,#adc5b6 56%,#b4ced0);transform:rotate(20deg);box-shadow:inset 8px 7px 20px #ffffff70,8px 12px 24px #526e5b1c}
+    .orb:after{content:"";position:absolute;width:42px;height:42px;right:-22px;top:1px;border-radius:50%;background:#efdda0;border:1px solid #ffffffb0}
+    .spark{position:absolute;right:4px;top:8px;font-size:20px;color:var(--green)}
+    .dots{display:none}.add-photo{width:100%;height:54px;border-radius:var(--radius);border:1px solid var(--green);background:var(--green);color:white;margin:0;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:560;box-shadow:0 7px 18px #405c481f;transition:transform .18s,background .18s}.add-photo:hover{transform:translateY(-2px);background:var(--green-deep)}.add-photo span{font-size:22px;font-weight:300;line-height:1}.add-caption{font-size:10px;color:var(--muted);text-align:center;margin-top:9px}
+    .home-bottom{order:4;padding:23px 0 10px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px}.home-bottom i{width:7px;height:7px;background:var(--sprout);border-radius:50%}
+    .home-section{margin-top:27px}.home-section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:13px}.home-section-head strong{font-size:15px;font-weight:600}.home-section-head small{font-size:10px;color:var(--muted)}
+    .home-recent{display:grid;grid-template-columns:1fr 1fr;gap:10px}.home-recent .empty{grid-column:1/-1;padding:18px 12px;border:1px dashed #cbd4ca;border-radius:var(--radius);text-align:left;background:#ffffff66}
+    .recent-item{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:9px;display:grid;grid-template-columns:42px 1fr;gap:9px;align-items:center;text-align:left;min-width:0;transition:transform .18s,box-shadow .18s}.recent-item:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.recent-swatch{width:42px;height:42px;border-radius:50% 45% 52% 44%;background:var(--c);border:1px solid #29352c18}.recent-item strong{display:block;font-size:11px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.recent-item small{display:block;font-size:9px;color:var(--muted);margin-top:4px}
+    .page-head{padding:27px 0 18px;display:flex;align-items:flex-start;justify-content:space-between}.page-head h1{font-size:var(--font-title);line-height:1.35;font-weight:570;margin:0}.page-head p{margin:5px 0 0;color:var(--muted);font-size:12px}
+    .icon-button{width:38px;height:38px;border:1px solid var(--line);background:var(--surface);border-radius:50%;font-size:19px}
+    .photo-panel{height:min(54vh,440px);min-height:290px;border:1px solid var(--line);border-radius:var(--radius);background:#edf1e9;position:relative;overflow:hidden;display:grid;place-items:center}
+    .photo-panel img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0}.photo-panel.has-image{background:#dfe5dc;cursor:crosshair}
+    .photo-placeholder{text-align:center;padding:24px}.photo-placeholder .upload-symbol{font-size:42px;font-weight:200;color:var(--green)}.photo-placeholder strong{display:block;font-size:14px;font-weight:550;margin:12px 0 6px}.photo-placeholder span{color:var(--muted);font-size:11px;line-height:1.7}
+    .sample-marker{position:absolute;z-index:2;width:20px;height:20px;border:2px solid white;border-radius:50%;box-shadow:0 0 0 1px var(--green),0 2px 8px #0003;transform:translate(-50%,-50%);display:none;pointer-events:none}.has-image .sample-marker{display:block}
+    .sample-readout{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}.sample-swatch{width:42px;height:42px;border-radius:50%;border:1px solid #28232822;flex:none;background:#e5b8d0}.sample-readout strong{font-size:13px;font-weight:550;display:block}.sample-readout small{font-size:11px;color:var(--muted);display:block;margin-top:4px}.sample-readout button{margin-left:auto;border:0;background:none;color:var(--green);font-size:11px}
+    .button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.primary,.secondary{min-height:46px;border-radius:var(--radius);font-weight:550;transition:transform .16s,background .16s}.primary{border:1px solid var(--green);background:var(--green);color:white}.primary:hover{background:var(--green-deep)}.secondary{border:1px solid #cbd7ce;background:#fffefa}.primary:active,.secondary:active,.icon-button:active{transform:scale(.98)}
+    .medium-switch{display:flex;padding:4px;background:#e9eee7;border-radius:var(--radius);gap:3px}.medium-switch button{flex:1;min-width:0;height:36px;border:0;background:transparent;border-radius:4px;color:var(--muted);font-size:12px}.medium-switch button.active{background:var(--surface);color:var(--green-deep);box-shadow:0 2px 8px #2f493912}
+    .result-colors{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0 24px}.color-sample{height:clamp(125px,37vw,166px);border:1px solid #27352c1c;border-radius:48% 48% 43% 50% / 45% 44% 52% 50%;background:#e7b6d0;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 #ffffff96}
+    .result-colors>div:nth-child(2) .color-sample{border-radius:42% 49% 45% 52% / 50% 43% 55% 45%;transform:translateY(11px)}
+    .color-label{display:flex;justify-content:space-between;align-items:center;gap:5px;margin-top:12px;font-size:11px}.color-label small{color:var(--muted);font:10px ui-monospace,monospace}
+    .section-title{font-size:16px;font-weight:600;margin:25px 0 12px;display:flex;justify-content:space-between;align-items:center}.section-title small{font-size:10px;color:var(--muted);font-weight:400}
+    .recipe-box{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:11px 0}.recipe-row{display:grid;grid-template-columns:14px minmax(52px,1fr) minmax(54px,100px) 38px;gap:9px;align-items:center;padding:10px 0}.pigment-dot{width:12px;height:12px;border:1px solid #0001;border-radius:50%;background:var(--c)}.recipe-name{font-size:12px}.bar{height:5px;background:#e9eee7;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:var(--p);background:var(--c)}.percent{text-align:right;font-size:11px;color:#59665d}
+    .note{font-size:10px;color:var(--muted);line-height:1.7;margin:12px 0}.feedback{padding:17px 0 4px}.feedback p{font-size:12px;margin:0 0 11px}.feedback-options{display:flex;gap:7px;flex-wrap:wrap}.feedback-options button{border:1px solid #dce4db;background:#fffefa;border-radius:4px;padding:8px 11px;font-size:11px;transition:background .16s,border-color .16s}.feedback-options button:active{background:var(--green-pale);border-color:var(--green)}.adjust-note{font-size:11px;color:var(--green-deep);line-height:1.7;margin-top:12px;display:none}
+    .record-list,.pigment-list{border-top:1px solid var(--line)}.record-item{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}.record-color{height:44px;width:44px;border:1px solid #29352c18;border-radius:50%;background:var(--c)}.record-item strong{font-size:12px;font-weight:550;display:block}.record-item small{font-size:10px;color:var(--muted);display:block;margin-top:5px}.record-item time{font-size:10px;color:var(--muted)}
+    .tools{display:flex;gap:8px;margin:4px 0 14px}.search{height:42px;flex:1;min-width:0;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);font-size:12px}.add-btn{height:42px;width:42px;border:1px solid var(--green);background:var(--surface);border-radius:var(--radius);font-size:20px;font-weight:300}
+    .pigment-item{display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid var(--line)}.pigment-item input{accent-color:var(--green)}.pigment-chip{width:25px;height:25px;border:1px solid #211d2015;border-radius:50%;background:var(--c)}.pigment-info{flex:1}.pigment-info strong{display:block;font-size:12px;font-weight:500}.pigment-info small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.count{font-size:10px;color:var(--muted)}
+    .empty{font-size:12px;text-align:center;padding:40px 15px;color:var(--muted);line-height:1.8}.toast{position:fixed;bottom:calc(86px + var(--safe-bottom));left:50%;transform:translate(-50%,12px);opacity:0;pointer-events:none;background:var(--green-deep);color:white;padding:11px 16px;border-radius:var(--radius);font-size:12px;transition:.2s;z-index:20;white-space:nowrap}.toast.show{opacity:1;transform:translate(-50%,0)}
+    .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:calc(69px + var(--safe-bottom));padding:0 10px var(--safe-bottom);display:flex;justify-content:space-around;align-items:center;border-top:1px solid #e1e7df;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:5}.bottom-nav button{min-width:62px;min-height:48px;border:0;background:none;color:#7e8980;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px}.bottom-nav button.active{color:var(--green-deep)}.nav-icon{font-size:20px;line-height:1}
+    .modal-backdrop{position:fixed;inset:0;background:#1e2b2380;display:none;place-items:end center;z-index:15;padding:14px}.modal-backdrop.open{display:grid}.modal{width:min(100%,452px);background:var(--surface);padding:22px;border:1px solid #ffffffb5;border-radius:8px 8px 5px 5px;box-shadow:var(--shadow)}.modal h2{font-size:18px;font-weight:600;margin:0 0 18px}.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:11px;color:var(--muted)}.field input{height:42px;border:1px solid var(--line);border-radius:var(--radius);padding:0 11px;background:white}.field input[type=color]{padding:4px;width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.modal-actions button{padding:10px 14px}
+    @media(min-width:700px){body{padding:18px 0}.app{min-height:calc(100dvh - 36px);border-radius:8px}.home{min-height:calc(100dvh - 203px)}.bottom-nav{bottom:0}.toast{bottom:100px}}
+    @media(max-width:360px){main{padding-left:17px;padding-right:17px}.home-hero h1{font-size:30px}.hero-art{right:-12px;transform:scale(.88);transform-origin:top right}.recipe-row{grid-template-columns:12px minmax(48px,1fr) minmax(42px,76px) 34px;gap:7px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+    /* Home and recipe visual samples */
+    :root{--forest:#173c33;--forest-2:#244c3f;--leaf:#cfe28c;--mist:#eef1e7;--paper:#f3f2e9;--ink:#18352f;--muted:#7c8980;--green:#315b49;--green-deep:#173c33;--green-pale:#e3eadb;--glass:rgba(244,246,237,.78)}
+    html,body{background:#dce3d9}
+    .app{background:var(--paper)}
+    .topbar{height:66px;padding:0 24px;border:0;background:var(--paper)}
+    .brand{font-size:18px;font-weight:700;gap:10px}
+    .brand-mark{width:28px;height:28px;border:0;background:var(--forest);transform:none}
+    .brand-mark:before{width:12px;height:16px;background:var(--leaf);box-shadow:4px 2px 0 #94b89e}
+    #modeLabel{background:#e5eadf;padding:8px 12px;border-radius:999px}
+    main{padding:0 20px calc(108px + var(--safe-bottom))}
+    .home{min-height:0;padding:13px 0 24px;display:block}
+    .home-kicker{display:none}
+    .home-hero{min-height:0;padding:11px 4px 22px;display:grid;grid-template-columns:1fr auto;align-items:end}
+    .home-hero h1{font-size:30px;line-height:1.2;font-weight:650;max-width:240px;letter-spacing:0}
+    .home-hero .intro{grid-column:1/-1;margin:9px 0 0;max-width:280px;font-size:13px;line-height:1.65;color:#63736a}
+    .hero-art{position:relative;right:auto;top:auto;width:60px;height:60px;grid-column:2;grid-row:1;overflow:visible}
+    .hero-orbit{width:54px;height:54px;right:0;top:3px;border-color:#9bae88}
+    .orb{width:38px;height:46px;right:9px;top:7px;border-radius:52% 48% 38% 62%;background:linear-gradient(145deg,#dfedac,#8cb69c 70%,#729ca1);box-shadow:inset 4px 4px 10px #ffffff78,3px 5px 12px #213e3235}
+    .orb:after{width:18px;height:18px;right:-9px;top:-2px;background:#f1d991;border:1px solid #fff9}
+    .spark{right:-2px;top:-5px;color:#476b4d}
+    .add-photo{position:absolute;z-index:2;left:15px;bottom:15px;width:auto;height:46px;margin:0;padding:0 18px;border:1px solid #ffffffa8;border-radius:999px;background:rgba(233,241,225,.84);color:#153b32;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 8px 24px #0f2b2438}
+    .add-photo:hover{background:#f7f8ee;color:#153b32}
+    .add-photo span{font-size:14px;font-weight:650}
+    .add-photo span:first-child{font-size:21px;font-weight:300}
+    .add-caption{position:absolute;left:18px;bottom:70px;margin:0;color:#fff;font-size:10px;text-shadow:0 1px 8px #081b17}
+    .home-showcase{height:clamp(320px,57vh,490px);position:relative;overflow:hidden;border-radius:34px 34px 34px 12px;background:#183b32}
+    .home-showcase img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 52%;transition:transform .9s cubic-bezier(.2,.7,.2,1);animation:photo-arrive .8s ease both}
+    .home-showcase:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(180deg,transparent,#0b251ecf);pointer-events:none}
+    .showcase-topline,.showcase-caption{position:absolute;z-index:1;color:#fff}
+    .showcase-topline{top:17px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;font-size:10px}
+    .showcase-topline span:first-child{padding:8px 11px;border:1px solid #ffffff70;border-radius:999px;background:#ffffff25;backdrop-filter:blur(12px)}
+    .showcase-topline span:last-child{font-size:18px;color:#f1f1da}
+    .showcase-caption{left:20px;right:18px;bottom:76px}
+    .showcase-caption small{font-size:10px;color:#d8e3d5}
+    .showcase-caption strong{display:block;margin-top:5px;font-size:20px;font-weight:600}
+    .home-section{margin-top:26px}
+    .home-section-head{align-items:center;margin:0 3px 15px}
+    .home-section-head strong{font-size:17px}
+    .home-section-head small{font-size:10px}
+    .home-recent{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:12px}
+    .recent-item{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0 0 12px;border:0;border-radius:22px 22px 22px 8px;background:transparent;overflow:hidden;box-shadow:none}
+    .recent-item:nth-child(2){margin-top:24px;border-radius:8px 22px 22px 22px}
+    .recent-swatch{width:100%;height:148px;border:0;border-radius:inherit;background:radial-gradient(circle at 65% 25%,#ffffff9c,transparent 26%),var(--c);box-shadow:inset 0 0 30px #102b2415}
+    .recent-item strong{padding:10px 10px 0;font-size:12px}
+    .recent-item small{padding:0 10px;font-size:10px}
+    .home-recent .empty{grid-column:1/-1;padding:18px;border:1px solid #d8dfd3;border-radius:22px 22px 22px 8px;background:#fff9}
+    .home-bottom{padding:23px 4px 0;font-size:10px}
+    @keyframes photo-arrive{from{opacity:.65;transform:scale(1.035)}to{opacity:1;transform:scale(1)}}
+    .view:has(.home) .home-showcase:hover img{transform:scale(1.025)}
+    .app:has(#view-home.active) .bottom-nav{position:fixed;left:50%;bottom:calc(12px + var(--safe-bottom));width:min(360px,calc(100% - 42px));height:62px;transform:translateX(-50%);border:1px solid #ffffffa8;border-radius:999px;padding:0 12px;background:rgba(243,246,237,.84);box-shadow:0 10px 34px #1d362b2a}
+    .app:has(#view-home.active) .bottom-nav button{min-height:44px;min-width:74px;flex-direction:row;gap:7px;font-size:11px}
+    .app:has(#view-home.active) .bottom-nav button.active{color:#f5f6e9;background:var(--forest);border-radius:999px}
+    .app:has(#view-home.active) .nav-icon{font-size:17px}
+    @media(max-width:380px){
+      .home-showcase{height:clamp(300px,54vh,410px);border-radius:28px 28px 28px 10px}
+      .home-hero h1{font-size:27px}
+      .recent-swatch{height:126px}
+    }
+    @media(prefers-reduced-motion:reduce){.home-showcase img{animation:none}}
+
+    /* Dynamic photo theme and interaction redesign */
+    @property --bg-top{syntax:"<color>";inherits:true;initial-value:#fbf7f5}
+    @property --bg-bottom{syntax:"<color>";inherits:true;initial-value:#e8d9df}
+    @property --ink{syntax:"<color>";inherits:true;initial-value:#4b2930}
+    @property --glass-tint{syntax:"<color>";inherits:true;initial-value:#fffaf8}
+    @property --accent{syntax:"<color>";inherits:true;initial-value:#7f4252}
+    :root{
+      --bg-top:#fbf7f5;--bg-bottom:#e8d9df;--ink:#4b2930;--ink-soft:#725c62;
+      --glass-tint:#fffaf8;--accent:#7f4252;--accent-soft:#e9c8d2;
+      --swatch-1:#d9b7c0;--swatch-2:#c9d4c5;--swatch-3:#b4c4d5;
+      --swatch-4:#e4c89b;--swatch-5:#9eaab7;--swatch-6:#b9a3b7;
+      --theme-speed:700ms;--glass-alpha:.22;--glass-blur:24px;
+    }
+    html,body{background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));transition:background var(--theme-speed) cubic-bezier(.22,.8,.2,1),color var(--theme-speed) cubic-bezier(.22,.8,.2,1)}
+    body{font-family:-apple-system,"PingFang SC","HarmonyOS Sans SC","Noto Sans SC",sans-serif;color:var(--ink);overscroll-behavior:none}
+    .app{width:min(100%,430px);background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));box-shadow:0 0 80px #3c263012;transition:background var(--theme-speed) cubic-bezier(.22,.8,.2,1)}
+    .topbar{height:76px;padding:0 18px;background:transparent;border:0;color:var(--ink);position:relative;z-index:8}
+    .brand{font-size:20px;font-weight:700;letter-spacing:0}
+    .brand-mark{display:block;width:30px;height:30px;object-fit:contain;border:0;background:transparent;box-shadow:none;transform:none}
+    .brand-mark:before{content:none}
+    .top-actions{display:flex;gap:8px;margin-left:auto}
+    .top-action{width:44px;height:44px;border:1px solid color-mix(in srgb,var(--ink),transparent 72%);background:rgba(255,255,255,.16);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);border-radius:50%;font-size:18px;color:var(--ink);transition:transform .12s ease,background .2s ease,border-color .2s ease}
+    .top-action:hover{background:rgba(255,255,255,.32)}
+    .top-action:active,.icon-button:active,.drawer-close:active{transform:scale(.94)}
+    .top-back{margin-left:auto;margin-right:8px}
+    #modeLabel{display:none!important}
+    main{padding:0 16px calc(124px + var(--safe-bottom));min-height:calc(100dvh - 76px)}
+    .view{animation:view-in .42s cubic-bezier(.22,.8,.2,1)}
+    @keyframes view-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .home{padding:4px 0 24px;min-height:0}
+    .home-hero{padding:9px 8px 18px;min-height:0;display:flex;align-items:flex-start}
+    .home-hero h1{font-size:23px;line-height:1.32;font-weight:700;color:var(--ink);max-width:230px}
+    .home-hero .intro{font-size:12px;line-height:1.7;color:var(--ink-soft);max-width:250px;margin-top:7px}
+    .hero-art{display:none}
+    .home-showcase{height:min(55vh,500px);min-height:390px;border-radius:30px;overflow:visible;background:var(--swatch-2);box-shadow:0 22px 50px color-mix(in srgb,var(--ink),transparent 84%);transition:background var(--theme-speed),box-shadow .4s;isolation:isolate}
+    .home-showcase img{border-radius:30px;object-position:center;height:100%;filter:saturate(.94) contrast(.96);transition:filter .5s,transform .8s cubic-bezier(.22,.8,.2,1),opacity .5s}
+    .home-showcase:after{inset:0;border-radius:30px;background:linear-gradient(180deg,#00000009 20%,#00000072 100%);z-index:0}
+    .showcase-topline{top:16px;left:16px;right:16px}
+    .showcase-topline span:first-child{padding:7px 10px;background:rgba(255,255,255,.18);border-color:#ffffff55}
+    .showcase-caption{left:18px;bottom:30px;right:18px}
+    .showcase-caption small{font-family:ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.03em;opacity:.78}
+    .showcase-caption strong{font-size:22px;line-height:1.2}
+    .add-photo{left:16px;bottom:86px;height:48px;padding:0 17px;background:var(--glass-tint);color:var(--ink);border:1px solid #ffffff8a;box-shadow:0 10px 24px #0000002b;transition:background var(--theme-speed),color var(--theme-speed),transform .12s}
+    .add-caption{left:18px;bottom:66px;color:#fff;opacity:.8}
+    .palette-panel{position:absolute;left:14px;right:14px;bottom:-48px;padding:13px 14px 16px;border:1px solid #ffffff66;border-radius:22px;background:rgba(255,255,255,var(--glass-alpha,.22));backdrop-filter:blur(var(--glass-blur)) saturate(1.35);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.35);box-shadow:0 14px 34px #00000020,inset 0 1px 0 #ffffff80;z-index:3;transition:background var(--theme-speed),box-shadow .3s}
+    .palette-panel:before{content:"照片色谱";display:block;margin:0 0 10px;color:var(--ink);font-size:11px;font-weight:650}
+    .palette-handle{position:absolute;right:18px;top:-19px;width:38px;height:38px;border-radius:50%;background:var(--accent);border:3px solid #ffffffb0;box-shadow:0 0 0 6px #ffffff2a,0 8px 18px #0000002b;transition:background var(--theme-speed)}
+    .palette-handle:after{content:"";position:absolute;left:50%;top:50%;width:2px;height:16px;background:#fff;opacity:.74;transform:translate(-50%,-50%);border-radius:2px}
+    .palette-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 9px}
+    .palette-chip{border:0;background:transparent;color:var(--ink);display:grid;justify-items:center;gap:5px;padding:0;min-width:0;animation:chip-in .45s both cubic-bezier(.22,.8,.2,1)}
+    .palette-chip:nth-child(2){animation-delay:60ms}.palette-chip:nth-child(3){animation-delay:120ms}.palette-chip:nth-child(4){animation-delay:180ms}.palette-chip:nth-child(5){animation-delay:240ms}.palette-chip:nth-child(6){animation-delay:300ms}
+    .palette-chip i{width:48px;height:48px;border-radius:50%;background:var(--chip);box-shadow:inset 0 1px 0 #ffffffa8,0 5px 12px #00000018;transition:transform .16s}
+    .palette-chip:hover i{transform:scale(1.08)}
+    .palette-chip small{font:11px ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.02em}
+    @keyframes chip-in{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+    .home-section{margin-top:82px}
+    .home-section-head{margin:0 6px 14px}.home-section-head strong{font-size:16px;color:var(--ink)}.home-section-head small{color:var(--ink-soft)}
+    .home-recent{gap:10px}.recent-item{background:rgba(255,255,255,.16);border:1px solid #ffffff60;border-radius:20px;padding:10px;box-shadow:0 12px 24px #00000010;transition:transform .18s,background .2s}.recent-item:nth-child(2){margin-top:18px}.recent-item:hover{background:rgba(255,255,255,.3);transform:translateY(-3px)}
+    .recent-swatch{height:116px;border-radius:14px}.recent-item strong{color:var(--ink);padding:9px 2px 0}.recent-item small{color:var(--ink-soft);padding:0 2px}
+    .home-bottom{padding:23px 6px 0;color:var(--ink-soft)}
+    .home-bottom i{background:var(--accent);transition:background var(--theme-speed)}
+    .home-showcase.photo-panel{height:min(46vh,390px);min-height:300px;overflow:hidden;cursor:crosshair}
+    .home-showcase.photo-panel img{object-fit:cover}
+    .home-showcase.photo-panel:after{pointer-events:none}
+    .home-showcase.photo-panel .palette-panel{bottom:12px}
+    .home-showcase.photo-panel .showcase-caption{bottom:18px}
+    .home-showcase.photo-panel .add-caption{display:none}
+    .home-recipe{padding:50px 4px 0}
+    .home-recipe .sample-readout{margin:0 0 15px}
+    .home-recipe .medium-switch{margin:0 0 18px}
+    .home-recipe .result-colors{margin:10px 4px 18px;min-height:0}
+    .home-recipe .color-sample{height:116px;border-radius:22px 22px 22px 8px}
+    .home-recipe .result-colors>div:nth-child(2) .color-sample{transform:translateY(8px);border-radius:8px 22px 22px 22px}
+    .home-recipe .color-label{margin-top:10px}
+    .home-recipe .section-title{margin-top:18px}
+    .home-recipe .recipe-box{padding:5px 14px;border:1px solid #ffffff80;border-radius:20px;background:rgba(255,255,255,.2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 10px 25px #00000012,inset 0 1px 0 #ffffff80}
+    .home-recipe .recipe-row{grid-template-columns:17px minmax(55px,1fr) minmax(65px,100px) 38px;padding:11px 0}
+    .home-recipe .pigment-dot{width:15px;height:15px;border:2px solid #ffffffa0}
+    .home-recipe .bar{background:#ffffff70}
+    .home-recipe .note{margin:13px 4px}
+    .home-recipe .button-row{margin-top:17px}
+    .home-recipe .feedback{margin-top:21px;padding-top:18px;border-top:1px solid #ffffff70}
+    .home-recipe .feedback-options button{border:1px solid #ffffff70;background:rgba(255,255,255,.18);color:var(--ink);border-radius:999px}
+    .page-head{padding:13px 4px 20px}.page-head h1{font-size:22px;color:var(--ink);font-weight:700}.page-head p{color:var(--ink-soft)}
+    .icon-button{width:44px;height:44px;border:1px solid #ffffff70;background:rgba(255,255,255,.2);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:var(--ink)}
+    .photo-panel{height:min(58vh,480px);min-height:310px;border:1px solid #ffffff8a;border-radius:28px;background:rgba(255,255,255,.16);box-shadow:0 20px 42px #00000016;overflow:hidden}
+    .photo-panel img{object-fit:cover;filter:saturate(.96);transition:filter .5s,opacity .5s}
+    .photo-panel.has-image{background:var(--swatch-2)}
+    .sample-marker{width:30px;height:30px;border:3px solid #fff;box-shadow:0 0 0 1px #0005,0 0 0 8px #ffffff26,0 4px 12px #0005;transition:left .18s,top .18s,background var(--theme-speed)}
+    .sample-readout{margin:16px 4px 0;padding:14px;border:1px solid #ffffff70;border-radius:20px;background:rgba(255,255,255,.2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 10px 26px #00000010}
+    .sample-swatch{width:48px;height:48px;box-shadow:inset 0 1px 0 #ffffff8a,0 6px 14px #0002}
+    .sample-readout strong,.sample-readout small{color:var(--ink)}.sample-readout small{font:11px ui-monospace,"SF Mono",Menlo,monospace;margin-top:5px}.sample-readout button{color:var(--accent);font-weight:650}
+    .button-row{gap:10px}.primary,.secondary{min-height:48px;border-radius:999px}.primary{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 10px 22px color-mix(in srgb,var(--accent),transparent 70%)}.secondary{border-color:#ffffff80;background:rgba(255,255,255,.2);color:var(--ink);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+    .medium-switch{padding:4px;border:1px solid #ffffff70;background:rgba(255,255,255,.18);border-radius:999px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.medium-switch button{height:38px;border-radius:999px;color:var(--ink-soft)}.medium-switch button.active{background:var(--accent);color:#fff;box-shadow:none}
+    .record-list,.pigment-list{border-top:0}.record-item{margin:0 4px 10px;padding:12px;border:1px solid #ffffff70;border-radius:20px;background:rgba(255,255,255,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 22px #0000000d}.record-item strong,.record-item small,.record-item time{color:var(--ink)}.record-color{width:52px;height:52px}
+    .tools{margin:2px 4px 16px}.search{height:46px;border:1px solid #ffffff70;border-radius:999px;background:rgba(255,255,255,.22);color:var(--ink);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.add-btn{height:46px;width:46px;border-radius:50%;border-color:var(--accent);background:var(--accent);color:#fff}
+    .pigment-item{margin:0 4px 8px;padding:12px;border:1px solid #ffffff60;border-radius:18px;background:rgba(255,255,255,.16);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}.pigment-item input{accent-color:var(--accent)}.pigment-chip{width:34px;height:34px}.pigment-info strong,.pigment-info small{color:var(--ink)}
+    .bottom-nav{position:fixed;left:50%;bottom:calc(16px + var(--safe-bottom));width:min(360px,calc(100% - 34px));height:62px;transform:translateX(-50%);border:1px solid #ffffff8a;border-radius:999px;padding:0 10px;background:rgba(255,255,255,.24);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);box-shadow:0 16px 38px #0000001d;z-index:10;transition:background var(--theme-speed),border-color .3s}
+    .bottom-nav button{min-width:78px;min-height:44px;flex-direction:row;gap:7px;color:var(--ink-soft);font-size:11px}.bottom-nav button.active{color:#fff;background:var(--accent);border-radius:999px;box-shadow:0 6px 18px color-mix(in srgb,var(--accent),transparent 68%)}.nav-icon{font-size:16px}
+    .modal-backdrop,.drawer-backdrop{background:#24151d66;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+    .modal{border-radius:26px 26px 14px 14px;background:var(--glass-tint);color:var(--ink);border:1px solid #ffffffa0;box-shadow:0 -10px 40px #0002}.modal h2{color:var(--ink)}.field input{border-color:#ffffffb0;background:#ffffff55;border-radius:14px}
+    .drawer-backdrop{position:fixed;inset:0;display:none;align-items:end;justify-content:center;z-index:25}.drawer-backdrop.open{display:flex}.settings-drawer{width:min(100%,430px);padding:12px 20px calc(22px + var(--safe-bottom));background:var(--glass-tint);border:1px solid #ffffffa0;border-radius:26px 26px 0 0;box-shadow:0 -18px 50px #00000025;transform:translateY(100%);animation:drawer-in .32s cubic-bezier(.22,.8,.2,1) forwards;color:var(--ink)}.drawer-grab{width:42px;height:4px;border-radius:4px;background:color-mix(in srgb,var(--ink),transparent 68%);margin:0 auto 18px}.drawer-head{display:flex;justify-content:space-between;align-items:center;font-size:17px}.drawer-close{border:0;background:transparent;font-size:25px;color:var(--ink)}.setting-group{margin-top:22px}.setting-group>span{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:8px}.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.segmented button{min-height:40px;border:1px solid #ffffff80;border-radius:12px;background:#ffffff38;color:var(--ink);font-size:12px}.segmented button.active{background:var(--accent);border-color:var(--accent);color:#fff}.drawer-note{font-size:11px;color:var(--ink-soft);margin:22px 0 0;line-height:1.7}
+    @keyframes drawer-in{to{transform:translateY(0)}}
+    .material-solid .palette-panel,.material-solid .bottom-nav,.material-solid .sample-readout,.material-solid .recipe-box,.material-solid .record-item,.material-solid .pigment-item{background:var(--glass-tint);backdrop-filter:none;-webkit-backdrop-filter:none}
+    .material-liquid .palette-panel,.material-liquid .bottom-nav,.material-liquid .sample-readout,.material-liquid .recipe-box{background:rgba(255,255,255,.18);filter:url(#liquidGlass);box-shadow:0 12px 34px #0000001d,inset 0 1px 0 #ffffffa0}
+    .palette-style-glow .palette-panel{box-shadow:0 0 0 1px #ffffff55,0 14px 38px color-mix(in srgb,var(--accent),transparent 55%),inset 0 1px 0 #ffffff90}
+    .palette-style-full .palette-panel{left:0;right:0;bottom:-38px;border-radius:26px 26px 0 0;padding-left:22px;padding-right:22px}
+    .loading-overlay{position:fixed;inset:0;background:#21151d99;backdrop-filter:blur(12px);display:grid;place-items:center;z-index:40;color:#fff;opacity:0;pointer-events:none;transition:opacity .22s}.loading-overlay.show{opacity:1;pointer-events:auto}.loading-overlay span{display:grid;gap:12px;justify-items:center;font-size:13px}.spinner{width:28px;height:28px;border:2px solid #ffffff55;border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .sample-ripple{position:absolute;z-index:4;width:24px;height:24px;border:2px solid #fff;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);animation:ripple-out .55s cubic-bezier(.22,.8,.2,1) forwards;box-shadow:0 0 0 3px #ffffff3d}
+    @keyframes ripple-out{to{width:130px;height:130px;opacity:0}}
+    @media(max-width:380px){.top-actions{gap:4px}.top-action{width:42px;height:42px}.palette-chip i{width:44px;height:44px}.home-showcase.photo-panel{height:390px;min-height:300px}.home-recipe{padding-top:50px}.home-section{margin-top:34px}}
+    @media(prefers-reduced-motion:reduce){.view,.palette-chip,.loading-overlay,.settings-drawer{animation:none!important}.home-showcase img,.top-action,.bottom-nav,.palette-panel{transition:none!important}}
+
+    /* 改动：手机端固定画布比例，桌面端模拟 iPhone 外壳。 */
+    html,body{width:100%;height:100%;overflow:hidden}
+    body{background:color-mix(in srgb,var(--bg-bottom),#18231f 54%);display:grid;place-items:center}
+    #app{width:100%;max-width:430px;height:100dvh;margin:0 auto;overflow:hidden;position:relative;background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom));display:flex;flex-direction:column}
+    #app .topbar{flex:none}
+    #app main{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(124px + var(--safe-bottom));overscroll-behavior:contain}
+    #app .bottom-nav{position:absolute;left:50%;bottom:calc(16px + var(--safe-bottom));z-index:10}
+    #app .home-showcase.photo-panel{width:92%;height:auto;min-height:0;aspect-ratio:3 / 4;margin-left:auto;margin-right:auto}
+    #app .home-showcase.photo-panel img{width:100%;height:100%;object-fit:cover}
+    #app .palette-panel{left:10px;right:10px;bottom:10px;padding:10px 12px 12px;border-radius:18px}
+    #app .palette-panel:before{margin-bottom:7px;font-size:10px}
+    #app .palette-grid{gap:8px 7px}
+    #app .palette-chip i{width:40px;height:40px}
+    #app .palette-chip small{font-size:10px}
+    #app .palette-handle{width:32px;height:32px;right:14px;top:-16px}
+    #app .palette-handle:after{height:13px}
+    @media(min-width:481px){
+      body{min-height:100dvh}
+      #app{width:390px;height:844px;max-width:none;border-radius:44px;box-shadow:0 28px 90px rgba(9,20,15,.42)}
+    }
+    @media(max-width:480px){
+      body{display:block}
+      #app{border-radius:0;box-shadow:none}
+    }
   </style>
 </head>
 <body>
-<div class="app">
+<svg aria-hidden="true" width="0" height="0" style="position:absolute">
+  <!-- 改动：液态材质的轻量折射滤镜，不支持时由 CSS 自动降级 -->
+  <filter id="liquidGlass">
+    <feTurbulence type="fractalNoise" baseFrequency=".02" numOctaves="2" seed="7" result="noise"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+  </filter>
+</svg>
+<div class="app" id="app">
   <header class="topbar">
-    <div class="brand"><i class="brand-mark"></i><span>拾色</span></div>
-    <button class="top-action" id="backButton" aria-label="返回上一页" hidden>‹</button>
+    <div class="brand"><img class="brand-mark" src="icon.svg" alt=""><span>调色盘</span></div>
+    <button class="top-action top-back" id="backButton" aria-label="返回上一页" hidden>‹</button>
+    <div class="top-actions" aria-label="工具">
+      <button class="top-action" id="quickUpload" aria-label="换一张照片">＋</button>
+      <button class="top-action" id="exportAction" aria-label="导出当前色卡">↓</button>
+      <button class="top-action" id="settingsAction" aria-label="打开设置">⚙</button>
+    </div>
     <span id="modeLabel" style="font-size:10px;color:#9c9299">本地创作</span>
   </header>
   <main>
     <section class="view active" id="view-home">
       <div class="home">
-        <div class="eyebrow">COLOR NOTES · 01</div>
-        <div class="hero-art" aria-hidden="true"><div class="hero-orbit"></div><div class="orb"></div><span class="spark">✦</span></div>
-        <h1>留住眼前的颜色</h1>
-        <p class="intro">从照片里取一抹颜色，<br>用手边的颜料慢慢调出来。</p>
-        <div class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-        <button class="add-photo" id="homeUpload" aria-label="从相册添加照片"><span>+</span></button>
-        <div class="add-caption">从相册选择一张照片</div>
-        <div class="home-bottom"><i></i><span id="homeSaved">从一张照片开始你的配色记录</span></div>
+        <!-- 改动：照片取样区域与配方结果共处首页，选色无需进入独立页面。 -->
+        <div class="home-showcase photo-panel has-image" id="photoPanel">
+          <img id="photo" src="forest-reference.jpg" alt="阳光穿过树叶的林间景色">
+          <i class="sample-marker" id="sampleMarker" aria-hidden="true"></i>
+          <div class="showcase-topline"><span>点击照片取样</span><span aria-hidden="true">✳</span></div>
+          <div class="showcase-caption"><small>FIELD NOTES　/　NATURE</small><strong>光落在树影之间</strong></div>
+          <button class="add-photo" id="homeUpload" aria-label="从相册添加照片"><span>＋</span><span>从照片取色</span></button>
+          <div class="add-caption">选择一张写生参考照片</div>
+          <div class="palette-panel" id="homePalette" aria-label="照片主色">
+            <div class="palette-handle" aria-hidden="true"></div>
+            <div class="palette-grid" id="paletteGrid"></div>
+          </div>
+        </div>
+        <input id="fileInput" type="file" accept="image/*" hidden>
+        <div class="home-recipe">
+          <div class="sample-readout"><i class="sample-swatch" id="targetSwatch"></i><span><strong>当前取样色</strong><small id="targetHex">#E5B8D0</small></span><button id="copyHex">复制色值</button></div>
+          <div class="medium-switch" id="mediumSwitch"><button class="active" data-medium="水彩">水彩</button><button data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button></div>
+          <div class="result-colors">
+            <div><div class="color-sample" id="targetLarge"></div><div class="color-label"><span>目标颜色</span><small id="targetCode">#E5B8D0</small></div></div>
+            <div><div class="color-sample" id="mixSwatch" style="background:#d8a6c1"></div><div class="color-label"><span>混合预览</span><small id="mixHex">#D8A6C1</small></div></div>
+          </div>
+          <div class="section-title">颜料搭配比例 <small>混色估算 · 仅作试调参考</small></div>
+          <div class="recipe-box" id="recipeList"></div>
+          <p class="note">先少量试调，再逐步靠近目标色。实际颜料效果受品牌、用量和干湿影响。</p>
+          <div class="button-row"><button class="secondary" id="openPigments">管理颜料</button><button class="primary" id="saveRecipe">♡　保存配方</button></div>
+          <div class="feedback"><p>实际试色后，颜色有什么不同？</p><div class="feedback-options" id="feedbackButtons"><button data-feedback="偏黄">偏黄</button><button data-feedback="偏红">偏红</button><button data-feedback="偏蓝">偏蓝</button><button data-feedback="太深">太深</button><button data-feedback="太浅">太浅</button><button data-feedback="太灰">太灰</button><button data-feedback="更接近">更接近</button></div><div class="adjust-note" id="adjustNote"></div></div>
+        </div>
+        <div class="home-section">
+          <div class="home-section-head"><strong>最近调过</strong><small id="homeSaved">查看全部　↗</small></div>
+          <div class="home-recent" id="homeRecent"></div>
+        </div>
       </div>
-    </section>
-    <section class="view" id="view-sample">
-      <div class="page-head"><div><h1>选取颜色</h1><p>轻点照片，选择你想调出的颜色</p></div><button class="icon-button" id="replacePhoto" aria-label="更换照片">↻</button></div>
-      <div class="photo-panel" id="photoPanel">
-        <div class="photo-placeholder" id="placeholder"><div class="upload-symbol">＋</div><strong>选择一张写生参考照片</strong><span>支持 JPG、PNG 等常见图片格式</span></div>
-        <img id="photo" alt="用于取色的照片" hidden><i class="sample-marker" id="sampleMarker"></i>
-      </div>
-      <input id="fileInput" type="file" accept="image/*" hidden>
-      <div class="sample-readout"><i class="sample-swatch" id="targetSwatch"></i><span><strong>当前取样色</strong><small id="targetHex">#E5B8D0</small></span><button id="copyHex">复制色值</button></div>
-      <div class="button-row"><button class="secondary" id="sampleAgain">重新选择</button><button class="primary" id="showRecipe">查看配方　→</button></div>
-      <p class="note">屏幕颜色会受光线与设备影响，配方仅作实际试调参考。</p>
-    </section>
-    <section class="view" id="view-result">
-      <div class="page-head"><div><h1>调出这抹颜色</h1><p>根据你携带的颜料估算配方</p></div><button class="icon-button" id="resultCopy" aria-label="复制目标色值">⧉</button></div>
-      <div class="medium-switch" id="mediumSwitch"><button class="active" data-medium="水彩">水彩</button><button data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button></div>
-      <div class="result-colors"><div><div class="color-sample" id="targetLarge"></div><div class="color-label"><span>目标颜色</span><small id="targetCode">#E5B8D0</small></div></div><div><div class="color-sample" id="mixSwatch" style="background:#d8a6c1"></div><div class="color-label"><span>混合预览</span><small id="mixHex">#D8A6C1</small></div></div></div>
-      <div class="section-title">推荐配方 <small>估算 · 约 82% 接近</small></div>
-      <div class="recipe-box" id="recipeList"></div>
-      <div class="note">先少量试调，再逐步靠近目标色。实际颜料效果受品牌、用量和干湿影响。</div>
-      <div class="button-row"><button class="secondary" id="openPigments">管理颜料</button><button class="primary" id="saveRecipe">♡　保存配方</button></div>
-      <div class="feedback"><p>实际试色后，颜色有什么不同？</p><div class="feedback-options" id="feedbackButtons"><button data-feedback="偏黄">偏黄</button><button data-feedback="偏红">偏红</button><button data-feedback="偏蓝">偏蓝</button><button data-feedback="太深">太深</button><button data-feedback="太浅">太浅</button><button data-feedback="太灰">太灰</button><button data-feedback="更接近">更接近</button></div><div class="adjust-note" id="adjustNote"></div></div>
     </section>
     <section class="view" id="view-saved">
       <div class="page-head"><div><h1>配色记录</h1><p>保存过的颜色与混合比例</p></div><span class="count" id="savedCount"></span></div>
@@ -114,6 +339,19 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 <div class="modal-backdrop" id="modal"><form class="modal" id="pigmentForm"><h2>添加自定义颜料</h2><div class="field"><label for="newName">颜料名称</label><input id="newName" required placeholder="例如：青莲"></div><div class="field"><label for="newColor">颜色预览</label><input id="newColor" type="color" value="#c77da6"></div><div class="modal-actions"><button type="button" class="secondary" id="cancelModal">取消</button><button class="primary">添加</button></div></form></div>
+<div class="drawer-backdrop" id="settingsDrawer" aria-hidden="true">
+  <section class="settings-drawer" aria-label="显示设置">
+    <div class="drawer-grab" aria-hidden="true"></div>
+    <div class="drawer-head"><strong>显示设置</strong><button id="closeSettings" class="drawer-close" aria-label="关闭设置">×</button></div>
+    <div class="setting-group"><span>色卡样式</span><div class="segmented"><button class="active" data-setting="paletteStyle" data-value="classic">经典浮动</button><button data-setting="paletteStyle" data-value="glow">浮光刻印</button><button data-setting="paletteStyle" data-value="full">纵向通顶</button></div></div>
+    <div class="setting-group"><span>材质</span><div class="segmented"><button data-setting="material" data-value="solid">实色</button><button class="active" data-setting="material" data-value="frosted">磨砂</button><button data-setting="material" data-value="liquid">液态</button></div></div>
+    <p class="drawer-note">操作提示 · 选择的材质会应用到浮层和底部导航。</p>
+  </section>
+</div>
+<!-- 改动：选图过程的加载反馈 -->
+<div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-busy="false">
+  <span><i class="spinner"></i>正在载入…</span>
+</div>
 <script>
 (()=>{
   const seed=[
@@ -138,31 +376,137 @@
   const all=()=>[...seed,...state.custom], activeIds=()=>checked[state.medium]||[];
   const rgb=h=>{const v=h.replace("#","");return [0,2,4].map(i=>parseInt(v.slice(i,i+2),16))};
   const hex=a=>"#"+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0")).join("").toUpperCase();
+  // 改动：主题色统一从照片生成，并量化到 16 的倍数，保证色值稳定可读。
+  const quantize=n=>Math.max(0,Math.min(255,Math.round(n/16)*16));
+  const quantizedHex=a=>hex(a.map(quantize));
+  const luminance=h=>{const c=rgb(h).map(v=>v/255).map(v=>v<=.03928?v/12.92:((v+.055)/1.055)**2.4);return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+  const contrast=(a,b)=>{const l1=luminance(a),l2=luminance(b);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)};
+  const chooseInk=bg=>contrast(bg,"#2A171E")>=4.5?"#2A171E":"#FFF9F0";
+  const saturation=h=>{const [r,g,b]=rgb(h).map(v=>v/255),max=Math.max(r,g,b),min=Math.min(r,g,b);return max===0?0:(max-min)/max};
+  const sortPalette=colors=>colors.sort((a,b)=>luminance(b)-luminance(a)||saturation(b)-saturation(a));
+  function fallbackPalette(){return ["#F0D8E0","#D0C0E0","#B0C8C0","#90B0C0","#D0B080","#806070"];}
+  function renderPalette(colors){
+    const grid=$("#paletteGrid"); if(!grid)return;
+    grid.innerHTML=colors.map(color=>`<button class="palette-chip" data-palette-color="${color}" aria-label="使用颜色 ${color}"><i style="--chip:${color}"></i><small>${color}</small></button>`).join("");
+  }
+  function applyTheme(colors){
+    const palette=sortPalette(colors.slice(0,6));
+    const top=palette.slice(0,3).reduce((acc,c)=>acc.map((v,i)=>v+rgb(c)[i]/3),[0,0,0]);
+    const bottom=palette.slice(-3).reduce((acc,c)=>acc.map((v,i)=>v+rgb(c)[i]/3),[0,0,0]);
+    const root=document.documentElement;
+    const bgTop=quantizedHex(top.map(v=>Math.min(255,v*1.1)));
+    const bgBottom=quantizedHex(bottom.map(v=>v*.85));
+    const ink=chooseInk(bgTop);
+    root.style.setProperty("--bg-top",bgTop);
+    root.style.setProperty("--bg-bottom",bgBottom);
+    root.style.setProperty("--ink",ink);
+    root.style.setProperty("--ink-soft",ink==="#FFF9F0"?"#FFF9F0B8":"#2A171E99");
+    root.style.setProperty("--glass-tint",ink==="#FFF9F0"?"rgba(33,24,29,.82)":"rgba(255,249,240,.78)");
+    root.style.setProperty("--accent",palette[4]||palette[0]);
+    root.style.setProperty("--accent-soft",palette[1]||palette[0]);
+    palette.forEach((color,i)=>root.style.setProperty(`--swatch-${i+1}`,color));
+    const meta=document.querySelector('meta[name="theme-color"]'); if(meta)meta.setAttribute("content",bgTop);
+    renderPalette(palette);
+  }
+  function extractPalette(img){
+    const fallback=()=>{
+      const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d",{willReadFrequently:true});
+      const scale=Math.min(1,64/Math.max(img.naturalWidth,img.naturalHeight));
+      canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const data=ctx.getImageData(0,0,canvas.width,canvas.height).data,buckets=new Map();
+      for(let i=0;i<data.length;i+=4){
+        if(data[i+3]<180)continue;
+        const c=[data[i],data[i+1],data[i+2]],key=c.map(quantize).join(",");
+        const item=buckets.get(key)||{rgb:[0,0,0],count:0};
+        item.rgb=item.rgb.map((v,j)=>v+c[j]);item.count++;buckets.set(key,item);
+      }
+      const colors=[...buckets.values()].sort((a,b)=>b.count-a.count).slice(0,36).map(x=>quantizedHex(x.rgb.map(v=>v/x.count)));
+      const unique=[...new Set(colors)];
+      while(unique.length<6)unique.push(fallbackPalette()[unique.length]);
+      return sortPalette(unique.slice(0,6));
+    };
+    // 改动：支持 OffscreenCanvas 的浏览器把缩图与颜色统计交给 Worker。
+    if(!("OffscreenCanvas" in window)||!("createImageBitmap" in window)||!("Worker" in window))return Promise.resolve(fallback());
+    return createImageBitmap(img).then(bitmap=>new Promise(resolve=>{
+      const source=`onmessage=e=>{const q=v=>Math.max(0,Math.min(255,Math.round(v/16)*16)),b=e.data,c=new OffscreenCanvas(64,64),x=c.getContext("2d",{willReadFrequently:true});x.drawImage(b,0,0,64,64);const d=x.getImageData(0,0,64,64).data,m=new Map();for(let i=0;i<d.length;i+=4){if(d[i+3]<180)continue;const a=[d[i],d[i+1],d[i+2]],k=a.map(q).join(",");let z=m.get(k)||{a:[0,0,0],n:0};z.a=z.a.map((v,j)=>v+a[j]);z.n++;m.set(k,z)}const out=[...m.values()].sort((a,b)=>b.n-a.n).slice(0,36).map(z=>"#"+z.a.map(v=>q(v/z.n).toString(16).padStart(2,"0")).join("").toUpperCase());postMessage(out)}`;
+      const url=URL.createObjectURL(new Blob([source],{type:"text/javascript"})),worker=new Worker(url);
+      worker.onmessage=e=>{const colors=[...new Set(e.data)];while(colors.length<6)colors.push(fallbackPalette()[colors.length]);resolve(sortPalette(colors.slice(0,6)));worker.terminate();URL.revokeObjectURL(url)};
+      worker.onerror=()=>{worker.terminate();URL.revokeObjectURL(url);resolve(fallback())};
+      worker.postMessage(bitmap,[bitmap]);
+    })).catch(()=>fallback());
+  }
+  function setLoading(show){
+    const overlay=$("#loadingOverlay"); if(!overlay)return;
+    overlay.classList.toggle("show",show);overlay.setAttribute("aria-busy",String(show));
+  }
   const mix=arr=>{const total=arr.reduce((n,p)=>n+p.pct,0)||1;return hex([0,1,2].map(i=>arr.reduce((n,p)=>n+rgb(p.color)[i]*p.pct,0)/total))};
   function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2000)}
-  function navigate(view){state.view=view;$$(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+view));$$(".bottom-nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("#backButton").hidden=view==="home"||view==="saved"||view==="pigments";window.scrollTo({top:0,behavior:"smooth"});if(view==="saved")renderSaved();if(view==="pigments")renderPigments()}
+  function navigate(view){
+    if(view==="sample"||view==="result")view="home";
+    const run=()=>{state.view=view;$$(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+view));$$(".bottom-nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===view));$("#backButton").hidden=true;window.scrollTo({top:0,behavior:"smooth"});if(view==="saved")renderSaved();if(view==="pigments")renderPigments()};
+    if(document.startViewTransition)document.startViewTransition(run);else run();
+  }
   function renderPigments(){const q=$("#searchPigments").value.trim().toLowerCase();const list=all().filter(p=>p.media.includes(state.medium)&&p.name.toLowerCase().includes(q));$("#pigmentList").innerHTML=list.map(p=>`<label class="pigment-item"><input type="checkbox" data-id="${p.id}" ${activeIds().includes(p.id)?"checked":""}><i class="pigment-chip" style="--c:${p.color}"></i><span class="pigment-info"><strong>${p.name}</strong><small>${p.type}</small></span></label>`).join("")||'<div class="empty">没有找到颜料</div>';$("#pigmentCount").textContent=`${activeIds().length} 种已携带`;$$("[data-medium]",$("#pigmentMedium")).forEach(b=>b.classList.toggle("active",b.dataset.medium===state.medium))}
   function renderRecipe(){const candidates=activeIds().map(id=>all().find(p=>p.id===id)).filter(Boolean).sort((a,b)=>rgb(a.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0)-rgb(b.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0)).slice(0,Math.min(3,activeIds().length));if(!candidates.length){recipe=[];$("#recipeList").innerHTML='<div class="empty">还没有选择颜料。<br>先到颜料页勾选本次携带的颜色。</div>';$("#mixHex").textContent="—";$("#mixSwatch").style.background="#f1e9ef";return}
     let weights=candidates.map(p=>1/Math.max(30,Math.sqrt(rgb(p.color).reduce((n,v,i)=>n+(v-rgb(state.target)[i])**2,0))));if(state.feedback%2&&weights.length>1)weights[0]*=1.35;const sum=weights.reduce((a,b)=>a+b,0);recipe=candidates.map((p,i)=>({id:p.id,name:p.name,color:p.color,pct:Math.round(weights[i]/sum*100)}));recipe[0].pct+=100-recipe.reduce((n,p)=>n+p.pct,0);
     $("#recipeList").innerHTML=recipe.map(p=>`<div class="recipe-row"><i class="pigment-dot" style="--c:${p.color}"></i><span class="recipe-name">${p.name}</span><span class="bar"><i style="--p:${p.pct}%;--c:${p.color}"></i></span><span class="percent">${p.pct}%</span></div>`).join("");$("#mixHex").textContent=mix(recipe);$("#mixSwatch").style.background=mix(recipe)}
   function updateTarget(h){state.target=h.toUpperCase();state.feedback=0;$("#targetSwatch").style.background=state.target;$("#targetHex").textContent=state.target;$("#targetLarge").style.background=state.target;$("#targetCode").textContent=state.target;$("#sampleMarker").style.background=state.target;renderRecipe()}
-  function renderSaved(){$("#savedCount").textContent=`${saved.length} 条`;$("#homeSaved").textContent=saved.length?`已经收藏 ${saved.length} 份配色记录`:"从一张照片开始你的配色记录";$("#savedList").innerHTML=saved.length?saved.map((s,i)=>`<div class="record-item" data-saved="${i}"><i class="record-color" style="--c:${s.target}"></i><span><strong>${s.name}</strong><small>${s.medium} · ${s.recipe.map(p=>p.name).join("、")}</small></span><time>${s.date}</time></div>`).join(""):'<div class="empty">还没有配色记录<br>保存的配方会留在这里</div>'}
-  $("#homeUpload").onclick=()=>$("#fileInput").click();$("#replacePhoto").onclick=()=>$("#fileInput").click();$("#sampleAgain").onclick=()=>$("#fileInput").click();
-  $("#fileInput").onchange=e=>{const f=e.target.files[0];if(!f)return;if(state.photoUrl)URL.revokeObjectURL(state.photoUrl);state.photoUrl=URL.createObjectURL(f);const img=$("#photo");img.src=state.photoUrl;img.hidden=false;$("#placeholder").hidden=true;$("#photoPanel").classList.add("has-image");img.onload=()=>{sampleAt(.5,.5);navigate("sample");toast("照片已载入，点击画面取色")}};
-  function sampleAt(x,y){const panel=$("#photoPanel"),img=$("#photo"),rect=panel.getBoundingClientRect();$("#sampleMarker").style.left=`${x*rect.width}px`;$("#sampleMarker").style.top=`${y*rect.height}px`;try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);const scale=Math.min(rect.width/c.width,rect.height/c.height),w=c.width*scale,h=c.height*scale,ox=(rect.width-w)/2,oy=(rect.height-h)/2,px=Math.max(0,Math.min(c.width-1,Math.floor((x*rect.width-ox)/scale))),py=Math.max(0,Math.min(c.height-1,Math.floor((y*rect.height-oy)/scale))),d=ctx.getImageData(px,py,1,1).data;updateTarget(hex([d[0],d[1],d[2]]))}catch{toast("无法读取图片颜色，请重新选择")}}
-  $("#photoPanel").onclick=e=>{if(!state.photoUrl)return;const r=e.currentTarget.getBoundingClientRect();sampleAt((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)};
-  $("#showRecipe").onclick=()=>{renderRecipe();navigate("result")};
+  function renderSaved(){$("#savedCount").textContent=`${saved.length} 条`;$("#homeSaved").textContent=saved.length?`${saved.length} 份记录`:"暂无记录";$("#savedList").innerHTML=saved.length?saved.map((s,i)=>`<div class="record-item" data-saved="${i}"><i class="record-color" style="--c:${s.target}"></i><span><strong>${s.name}</strong><small>${s.medium} · ${s.recipe.map(p=>p.name).join("、")}</small></span><time>${s.date}</time></div>`).join(""):'<div class="empty">还没有配色记录<br>保存的配方会留在这里</div>';$("#homeRecent").innerHTML=saved.length?saved.slice(0,2).map((s,i)=>`<button class="recent-item" data-home-saved="${i}"><i class="recent-swatch" style="--c:${s.target}"></i><span><strong>${s.name}</strong><small>${s.medium} · ${s.recipe.map(p=>p.name).join("、")}</small></span></button>`).join(""):'<div class="empty">保存过的配方会出现在这里</div>'}
+  $("#homeUpload").onclick=()=>$("#fileInput").click();$("#quickUpload").onclick=()=>$("#fileInput").click();
+  $("#fileInput").onchange=e=>{
+    const f=e.target.files[0];if(!f)return;
+    setLoading(true);
+    if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);
+    state.photoUrl=URL.createObjectURL(f);
+    const img=$("#photo");
+    img.onload=async()=>{const colors=await extractPalette(img);applyTheme(colors);sampleAt(.5,.5);navigate("home");setTimeout(()=>setLoading(false),350);toast("照片已载入，点击画面取色")};
+    img.src=state.photoUrl;
+    e.target.value="";
+  };
+  function sampleAt(x,y){const panel=$("#photoPanel"),img=$("#photo"),rect=panel.getBoundingClientRect();$("#sampleMarker").style.left=`${x*rect.width}px`;$("#sampleMarker").style.top=`${y*rect.height}px`;try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);const scale=Math.max(rect.width/c.width,rect.height/c.height),w=c.width*scale,h=c.height*scale,ox=(rect.width-w)/2,oy=(rect.height-h)/2,px=Math.max(0,Math.min(c.width-1,Math.floor((x*rect.width-ox)/scale))),py=Math.max(0,Math.min(c.height-1,Math.floor((y*rect.height-oy)/scale))),d=ctx.getImageData(px,py,1,1).data;updateTarget(hex([d[0],d[1],d[2]]))}catch{toast("无法读取图片颜色，请重新选择")}}
+  $("#photoPanel").onclick=e=>{if(e.target.closest("button,.palette-panel"))return;if(!state.photoUrl)return;const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,ripple=document.createElement("i");ripple.className="sample-ripple";ripple.style.left=`${x}px`;ripple.style.top=`${y}px`;e.currentTarget.appendChild(ripple);setTimeout(()=>ripple.remove(),600);sampleAt(x/r.width,y/r.height)};
+  $("#paletteGrid").onclick=e=>{const chip=e.target.closest("[data-palette-color]");if(!chip)return;e.stopPropagation();updateTarget(chip.dataset.paletteColor);$("#sampleMarker").style.left="50%";$("#sampleMarker").style.top="50%"};
   $("#mediumSwitch").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;$$("[data-medium]",$("#mediumSwitch")).forEach(x=>x.classList.toggle("active",x===b));renderRecipe()};
   $("#pigmentMedium").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;renderPigments();renderRecipe()};
   $("#pigmentList").onchange=e=>{const input=e.target.closest("[data-id]");if(!input)return;const ids=new Set(activeIds());input.checked?ids.add(input.dataset.id):ids.delete(input.dataset.id);checked[state.medium]=[...ids];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));renderPigments();renderRecipe()};
   $("#searchPigments").oninput=renderPigments;$("#openPigments").onclick=()=>navigate("pigments");
   $("#feedbackButtons").onclick=e=>{const b=e.target.closest("[data-feedback]");if(!b)return;state.feedback++;renderRecipe();const advice={"偏黄":"建议减少暖黄色，少量加入群青或天蓝，再观察色相。","偏红":"建议减少曙红或熟褐，逐步加入少量冷色。","偏蓝":"试着加入少量黄赭或柠檬黄，让颜色回暖。","太深":"少量增加浅色颜料；水彩可先尝试增加水量。","太浅":"少量增加深色或着色力较强的颜料。","太灰":"减少互补色叠加，再加入少量目标色倾向的纯色。","更接近":"已记录反馈，可以继续微调或保存当前配方。"};$("#adjustNote").textContent=advice[b.dataset.feedback];$("#adjustNote").style.display="block"};
   $("#saveRecipe").onclick=()=>{if(!recipe.length){toast("先选择可用颜料再生成配方");return}saved.unshift({name:`写生色 ${saved.length+1}`,date:new Date().toLocaleDateString("zh-CN",{month:"2-digit",day:"2-digit"}),medium:state.medium,target:state.target,recipe:recipe.map(p=>({...p}))});localStorage.setItem("shise-saved",JSON.stringify(saved));renderSaved();toast("已保存在本机")};
-  async function copy(){try{await navigator.clipboard.writeText(state.target);toast("色值已复制")}catch{toast(state.target)}}$("#copyHex").onclick=copy;$("#resultCopy").onclick=copy;
-  $("#savedList").onclick=e=>{const row=e.target.closest("[data-saved]");if(!row)return;const item=saved[Number(row.dataset.saved)];if(!item)return;state.medium=item.medium;updateTarget(item.target);recipe=item.recipe;$("#mixSwatch").style.background=mix(recipe);$("#mixHex").textContent=mix(recipe);$("#recipeList").innerHTML=recipe.map(p=>`<div class="recipe-row"><i class="pigment-dot" style="--c:${p.color}"></i><span class="recipe-name">${p.name}</span><span class="bar"><i style="--p:${p.pct}%;--c:${p.color}"></i></span><span class="percent">${p.pct}%</span></div>`).join("");navigate("result")};
-  $$("[data-view]").forEach(b=>b.onclick=()=>navigate(b.dataset.view));$("#backButton").onclick=()=>navigate(state.photoUrl?"sample":"home");
+  async function copy(){try{await navigator.clipboard.writeText(state.target);toast("色值已复制")}catch{toast(state.target)}}$("#copyHex").onclick=copy;
+  function showSavedRecipe(item){state.medium=item.medium;$$("[data-medium]",$("#mediumSwitch")).forEach(b=>b.classList.toggle("active",b.dataset.medium===state.medium));updateTarget(item.target);recipe=item.recipe;$("#mixSwatch").style.background=mix(recipe);$("#mixHex").textContent=mix(recipe);$("#recipeList").innerHTML=recipe.map(p=>`<div class="recipe-row"><i class="pigment-dot" style="--c:${p.color}"></i><span class="recipe-name">${p.name}</span><span class="bar"><i style="--p:${p.pct}%;--c:${p.color}"></i></span><span class="percent">${p.pct}%</span></div>`).join("");navigate("home")};
+  $("#savedList").onclick=e=>{const row=e.target.closest("[data-saved]");if(!row)return;const item=saved[Number(row.dataset.saved)];if(item)showSavedRecipe(item)};
+  $("#homeRecent").onclick=e=>{const button=e.target.closest("[data-home-saved]");if(!button)return;const item=saved[Number(button.dataset.homeSaved)];if(item)showSavedRecipe(item)};
+  $$("[data-view]").forEach(b=>b.onclick=()=>navigate(b.dataset.view));$("#backButton").onclick=()=>navigate("home");
   $("#addPigment").onclick=()=>$("#modal").classList.add("open");$("#cancelModal").onclick=()=>$("#modal").classList.remove("open");$("#modal").onclick=e=>{if(e.target.id==="modal")$("#modal").classList.remove("open")};
   $("#pigmentForm").onsubmit=e=>{e.preventDefault();const p={id:"custom-"+Date.now(),name:$("#newName").value.trim(),color:$("#newColor").value,type:"自定义",media:["水彩","丙烯","油画"]};state.custom.push(p);localStorage.setItem("shise-custom",JSON.stringify(state.custom));checked[state.medium]=[...activeIds(),p.id];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));e.target.reset();$("#modal").classList.remove("open");renderPigments();renderRecipe();toast("颜料已添加")};
+  // 改动：设置抽屉、材质和色卡样式持久化。
+  const settings=read("settings",{paletteStyle:"classic",material:"frosted"});
+  function applySettings(){
+    document.body.classList.remove("material-solid","material-liquid","palette-style-glow","palette-style-full");
+    if(settings.material==="solid")document.body.classList.add("material-solid");
+    if(settings.material==="liquid")document.body.classList.add("material-liquid");
+    if(settings.paletteStyle==="glow")document.body.classList.add("palette-style-glow");
+    if(settings.paletteStyle==="full")document.body.classList.add("palette-style-full");
+    $$("[data-setting]").forEach(b=>b.classList.toggle("active",settings[b.dataset.setting]===b.dataset.value));
+  }
+  $("#settingsAction").onclick=()=>{$("#settingsDrawer").classList.add("open");$("#settingsDrawer").setAttribute("aria-hidden","false")};
+  $("#closeSettings").onclick=()=>{$("#settingsDrawer").classList.remove("open");$("#settingsDrawer").setAttribute("aria-hidden","true")};
+  $("#settingsDrawer").onclick=e=>{
+    if(e.target.id==="settingsDrawer"){$("#closeSettings").click();return}
+    const button=e.target.closest("[data-setting]");if(!button)return;
+    settings[button.dataset.setting]=button.dataset.value;localStorage.setItem("shise-settings",JSON.stringify(settings));applySettings();
+  };
+  $("#exportAction").onclick=()=>{
+    const lines=[`调色盘 · ${state.target}`,`媒介：${state.medium}`,`配方：${recipe.length?recipe.map(p=>`${p.name} ${p.pct}%`).join(" + "):"尚未生成"}`];
+    const blob=new Blob([lines.join("\n")],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download=`palette-${state.target.slice(1)}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);toast("色卡已导出");
+  };
+  applySettings();
+  renderPalette(fallbackPalette());
+  const initialImage=$("#photo");
+  const initializePhoto=()=>{state.photoUrl=initialImage.currentSrc||initialImage.src;extractPalette(initialImage).then(colors=>{applyTheme(colors);sampleAt(.5,.5)})};
+  if(initialImage.complete&&initialImage.naturalWidth)initializePhoto();else initialImage.onload=initializePhoto;
   renderPigments();renderSaved();renderRecipe();updateTarget(state.target);
 })();
 </script>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">调色盘</title>
+  <desc id="desc">自然色调的抽象调色盘图标</desc>
+  <rect width="64" height="64" rx="19" fill="#f7f1e8"/>
+  <path d="M31.7 11.5c-11.9 0-21.5 8.8-21.5 19.9 0 10.5 8.2 19.1 18.5 19.1h4.1c3.1 0 5.5-2.2 5.5-5 0-1.8-.9-3.2-2.2-4.2-1.2-1-1.8-2.2-1.8-3.6 0-3 2.5-5.4 5.7-5.4h3.4c5.5 0 9.9-4.2 9.9-9.4 0-6.8-9.1-11.4-21.6-11.4Z" fill="#315747"/>
+  <path d="M45.2 12.8c-3.8 1.4-7.3 4-9.5 7.4 3.7.8 7.2 2.3 10.1 4.5 2.4-3.8 2.5-7.9-.6-11.9Z" fill="#d88b78"/>
+  <circle cx="21.4" cy="27.2" r="4.1" fill="#d7d98c"/>
+  <circle cx="32.1" cy="21.2" r="4.1" fill="#a9c3c6"/>
+  <circle cx="43.4" cy="27.7" r="4.1" fill="#e9d99b"/>
+  <circle cx="22.2" cy="38.1" r="4.1" fill="#c5bfd3"/>
+</svg>
