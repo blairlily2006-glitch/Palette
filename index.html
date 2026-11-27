@@ -107,6 +107,7 @@
   state.custom=read("custom",[]);
   let saved=read("saved",[]);
   let checked=read("checkedByMedium",{水彩:["ultra","ochre","sienna","alizarin"],丙烯:["ultra","lemon","sap"],油画:["ultra","ochre","sienna","white"]});
+  let removedIds=read("removedPigments",[]);
   let recipe=[];
   const all=()=>[...seed,...state.custom],activeIds=()=>checked[state.medium]||[];
   const rgb=h=>{const v=h.replace("#","");return[0,2,4].map(i=>parseInt(v.slice(i,i+2),16))};
@@ -150,13 +151,13 @@
   }
   function renderPigments(){
     const query=$("#searchPigments").value.trim().toLowerCase();
-    const pigments=all().filter(p=>p.media.includes(state.medium)&&p.name.toLowerCase().includes(query));
-    $("#pigmentList").innerHTML=pigments.map(p=>`<label class="pigment-item"><input type="checkbox" data-id="${p.id}" ${activeIds().includes(p.id)?"checked":""}><i class="pigment-chip" style="--c:${p.color}"></i><strong>${p.name}</strong></label>`).join("")||'<p class="empty">没有找到颜料</p>';
+    const pigments=all().filter(p=>!removedIds.includes(p.id)&&p.media.includes(state.medium)&&p.name.toLowerCase().includes(query));
+    $("#pigmentList").innerHTML=pigments.map(p=>`<div class="pigment-item"><input id="pigment-${p.id}" type="checkbox" data-id="${p.id}" ${activeIds().includes(p.id)?"checked":""}><i class="pigment-chip" style="--c:${p.color}"></i><label for="pigment-${p.id}"><strong>${p.name}</strong></label><button class="remove-pigment" type="button" data-id="${p.id}" aria-label="移除颜料 ${p.name}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button></div>`).join("")||'<p class="empty">没有找到颜料</p>';
     $$("#pigmentMedium [data-medium]").forEach(button=>button.classList.toggle("active",button.dataset.medium===state.medium));
   }
   function renderRecipe(){
     if(!state.photoUrl){recipe=[];$("#recipeList").innerHTML="";return}
-    const candidates=activeIds().map(id=>all().find(p=>p.id===id)).filter(Boolean)
+    const candidates=activeIds().filter(id=>!removedIds.includes(id)).map(id=>all().find(p=>p.id===id)).filter(Boolean)
       .sort((a,b)=>rgb(a.color).reduce((sum,v,i)=>sum+(v-rgb(state.target)[i])**2,0)-rgb(b.color).reduce((sum,v,i)=>sum+(v-rgb(state.target)[i])**2,0)).slice(0,4);
     if(!candidates.length){recipe=[];$("#recipeList").innerHTML="";return}
     let weights=candidates.map(p=>1/Math.max(30,Math.sqrt(rgb(p.color).reduce((sum,v,i)=>sum+(v-rgb(state.target)[i])**2,0))));
@@ -253,6 +254,16 @@
     checked[state.medium]=[...ids];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));
     renderPigments();renderRecipe();
   };
+  $("#pigmentList").onclick=event=>{
+    const button=event.target.closest(".remove-pigment");if(!button)return;
+    const id=button.dataset.id,pigment=all().find(item=>item.id===id);
+    if(!pigment)return;
+    removedIds=[...new Set([...removedIds,id])];
+    Object.keys(checked).forEach(medium=>checked[medium]=(checked[medium]||[]).filter(item=>item!==id));
+    localStorage.setItem("shise-removedPigments",JSON.stringify(removedIds));
+    localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));
+    renderPigments();renderRecipe();toast(`已移除${pigment.name}`);
+  };
   $("#searchPigments").oninput=renderPigments;
   $("#saveRecipe").onclick=()=>{
     if(!recipe.length){toast("请先选择参与调色的颜料");return}
@@ -267,6 +278,7 @@
     event.preventDefault();
     const pigment={id:`custom-${Date.now()}`,name:$("#newName").value.trim(),color:$("#newColor").value,type:"自定义",media:["水彩","丙烯","油画"]};
     state.custom.push(pigment);localStorage.setItem("shise-custom",JSON.stringify(state.custom));
+    removedIds=removedIds.filter(id=>id!==pigment.id);localStorage.setItem("shise-removedPigments",JSON.stringify(removedIds));
     checked[state.medium]=[...activeIds(),pigment.id];localStorage.setItem("shise-checkedByMedium",JSON.stringify(checked));
     event.target.reset();$("#modal").classList.remove("open");renderPigments();renderRecipe();
   };

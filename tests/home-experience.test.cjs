@@ -95,6 +95,21 @@ test("initial checked pigments match the prototype", () => {
   assert.match(html, /丙烯:\["ultra","lemon","sap"\]/);
 });
 
+test("recipe uses only selected pigments and displays their actual swatches", () => {
+  assert.match(html, /const candidates=activeIds\(\)\.filter\(id=>!removedIds\.includes\(id\)\)\.map\(id=>all\(\)\.find\(p=>p\.id===id\)\)\.filter\(Boolean\)/);
+  assert.match(html, /style="--c:\$\{p\.color\}"/);
+  assert.match(html, /const candidates=activeIds\(\)\.filter\(id=>!removedIds\.includes\(id\)\)/);
+});
+
+test("base and custom pigments can be removed and stay removed after reload", () => {
+  assert.match(html, /let removedIds=read\("removedPigments",\[\]\)/);
+  assert.match(html, /class="remove-pigment"/);
+  assert.match(html, /aria-label="移除颜料/);
+  assert.match(html, /localStorage\.setItem\("shise-removedPigments",JSON\.stringify\(removedIds\)\)/);
+  assert.match(html, /const pigments=all\(\)\.filter\(p=>!removedIds\.includes\(p\.id\)/);
+  assert.match(html, /Object\.keys\(checked\)\.forEach\(medium=>checked\[medium\]=\(checked\[medium\]\|\|\[\]\)\.filter/);
+});
+
 test("brand, mascot asset, and Chinese line-breaking rule are preserved", () => {
   assert.match(html, /<title>Palette<\/title>/);
   assert.match(html, /src="assets\/palette-mascot\.png"/);

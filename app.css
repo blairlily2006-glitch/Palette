@@ -168,12 +168,19 @@ main{position:relative;flex:1;min-height:0;overflow:hidden}
 .add-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .pigment-list{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
 .pigment-item{
-  display:flex;align-items:center;gap:11px;margin:0 0 7px;padding:10px 12px;
+  display:flex;align-items:center;gap:11px;margin:0 0 7px;padding:10px 8px 10px 12px;
   border:1px solid #fff;border-radius:16px;background:rgba(255,255,255,.58);
 }
 .pigment-item input{width:15px;height:15px;margin:0;accent-color:#87adba}
 .pigment-chip{width:30px;height:30px;flex:none;border:1px solid #0000000d;border-radius:50%;background:var(--c)}
+.pigment-item label{flex:1;min-width:0;padding:7px 0;cursor:pointer}
 .pigment-item strong{font-size:12px;font-weight:600}
+.remove-pigment{
+  width:34px;height:34px;flex:none;display:grid;place-items:center;
+  border:0;border-radius:50%;background:rgba(255,255,255,.72);color:#8498a0;
+}
+.remove-pigment svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.remove-pigment:active{transform:scale(.94)}
 .empty{padding:20px;color:#929ba1;text-align:center;font-size:11px}
 .bottom-nav{
   position:absolute;left:50%;bottom:calc(15px + var(--safe-bottom));
