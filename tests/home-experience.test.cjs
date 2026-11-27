@@ -20,7 +20,7 @@ test("sampling and recipe remain together on the home screen", () => {
   }
   assert.equal(/id="view-(sample|result)"/.test(html), false);
   assert.match(html, /class="[^"]*home-recipe[^"]*"[^>]*id="recipePanel"/);
-  assert.match(html, /setTimeout\(\(\)=>\$\("#splashScreen"\)\.classList\.add\("is-hidden"\),1500\)/);
+  assert.match(html, /setTimeout\(\(\)=>\$\("#splashScreen"\)\.classList\.add\("is-hidden"\),1800\)/);
 });
 
 test("recipe is a four-item two-by-two grid and has no photo palette overlay", () => {
@@ -58,16 +58,37 @@ test("photo remains visible even when palette extraction fails", () => {
   assert.match(html, /image\.onload=async\(\)=>\{[\s\S]*?\$\("#photoPanel"\)\.classList\.add\("has-image"\)[\s\S]*?try\{[\s\S]*?extractPalette\(image\)[\s\S]*?finally\{setTimeout\(\(\)=>setLoading\(false\),250\)\}/);
   assert.match(css, /\.photo-panel\.has-image img\s*\{\s*display:\s*block/);
   assert.match(html, /if\(!state\.photoUrl\)\{\$\("#fileInput"\)\.click\(\);return\}/);
+  assert.match(html, /image\.src=state\.photoUrl;event\.target\.value=""/);
+  assert.match(html, /\$\("#photoPlaceholder"\)\.hidden=true/);
+  assert.match(css, /\.photo-placeholder\[hidden\]\s*\{\s*display:\s*none\s*\}/);
 });
 
 test("top actions and bottom navigation use the prototype icon shapes", () => {
   const topActions = html.match(/<div class="top-actions"[\s\S]*?<\/div>/)?.[0] ?? "";
   assert.match(topActions, /id="saveRecipe"[^>]*aria-label="保存配方"[\s\S]*?<svg[\s\S]*?<\/svg>/);
   assert.doesNotMatch(topActions, /▣/);
+  assert.match(html, /function navigate\(view\)\{[\s\S]*?\$\("\.top-actions"\)\.classList\.toggle\("is-hidden",view!=="home"\)/);
+  assert.match(css, /\.top-actions\.is-hidden\s*\{\s*display:\s*none/);
   const nav = html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0] ?? "";
   assert.equal((nav.match(/<svg/g) ?? []).length, 3);
   assert.match(nav, /viewBox="0 0 24 24"/);
   assert.doesNotMatch(nav, /nav-icon nav-/);
+  assert.match(nav, /class="nav-pigments"/);
+  assert.match(css, /\.nav-pigments\s*\{[^}]*stroke-dasharray/);
+  assert.match(css, /\.active \.nav-pigments\s*\{[^}]*stroke-dasharray:\s*none/);
+  assert.match(html, /id="addPigment"[^>]*aria-label="添加自定义颜料"[\s\S]*?<svg[\s\S]*?<\/svg>/);
+});
+
+test("splash is shown on launch and remains visible for about 1.5 seconds", () => {
+  assert.match(html, /<div class="splash-screen" id="splashScreen"/);
+  assert.match(html, /setTimeout\(\(\)=>\$\("#splashScreen"\)\.classList\.add\("is-hidden"\),1800\)/);
+  assert.match(css, /\.splash-screen\.is-hidden\s*\{\s*opacity:\s*0;\s*visibility:\s*hidden/s);
+});
+
+test("recipe content is vertically centered within a roomy panel", () => {
+  assert.match(css, /\.recipe-box\s*\{[^}]*min-height:\s*104px/s);
+  assert.match(css, /\.recipe-box\s*\{[^}]*align-content:\s*center/s);
+  assert.match(css, /\.recipe-row\s*\{[^}]*align-self:\s*center/s);
 });
 
 test("initial checked pigments match the prototype", () => {

@@ -21,7 +21,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       </button>
       <button class="top-action" id="saveRecipe" aria-label="保存配方">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.75h12.2L20.25 6.8v13.45H3.75V3.75H5Z"/><path d="M7.25 4v5.5h9.5V4M7.25 20v-7h9.5v7"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
       </button>
       <button class="top-action" id="clearPhoto" aria-label="清空照片">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
@@ -61,7 +61,7 @@
       <div class="medium-switch pigment-medium" id="pigmentMedium" role="group" aria-label="颜料媒介">
         <button data-medium="水彩">水彩</button><button class="active" data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button>
       </div>
-      <div class="tools"><input class="search" id="searchPigments" placeholder="搜索颜料名称" aria-label="搜索颜料名称"><button class="add-btn" id="addPigment" aria-label="添加自定义颜料">＋</button></div>
+      <div class="tools"><input class="search" id="searchPigments" placeholder="搜索颜料名称" aria-label="搜索颜料名称"><button class="add-btn" id="addPigment" aria-label="添加自定义颜料"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
       <div class="pigment-list" id="pigmentList"></div>
     </section>
   </main>
@@ -142,6 +142,7 @@
   function setLoading(show){const node=$("#loadingOverlay");node.classList.toggle("show",show);node.setAttribute("aria-busy",String(show))}
   function navigate(view){
     state.view=view;
+    $(".top-actions").classList.toggle("is-hidden",view!=="home");
     $$(".view").forEach(node=>node.classList.toggle("active",node.id===`view-${view}`));
     $$(".bottom-nav button").forEach(node=>node.classList.toggle("active",node.dataset.view===view));
     if(view==="saved")renderSaved();
@@ -198,14 +199,17 @@
     const file=event.target.files[0];if(!file)return;
     setLoading(true);if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);
     state.photoUrl=URL.createObjectURL(file);const image=$("#photo");
+    image.decoding="async";
     image.onload=async()=>{
       $("#photoPanel").classList.add("has-image");
+      $("#photoPlaceholder").hidden=true;
       sampleAt(state.sample.x,state.sample.y);navigate("home");
       try{applyTheme(await extractPalette(image))}
       catch{toast("照片已载入，暂时无法提取主色")}
       finally{setTimeout(()=>setLoading(false),250)}
     };
-    image.onerror=()=>{setLoading(false);toast("照片无法载入，请重试")};
+    image.onerror=()=>{$("#photoPanel").classList.remove("has-image");$("#photoPlaceholder").hidden=false;setLoading(false);toast("照片无法载入，请重试")};
+    $("#photoPlaceholder").hidden=false;
     image.src=state.photoUrl;event.target.value="";
   };
   let samplingPointer=null;
@@ -230,7 +234,7 @@
   };
   $("#clearPhoto").onclick=()=>{
     if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);
-    state.photoUrl="";$("#photo").removeAttribute("src");$("#photoPanel").classList.remove("has-image");
+    state.photoUrl="";$("#photo").removeAttribute("src");$("#photoPanel").classList.remove("has-image");$("#photoPlaceholder").hidden=false;
     document.documentElement.style.removeProperty("--bg-top");document.documentElement.style.removeProperty("--bg-bottom");
     document.querySelector('meta[name="theme-color"]').content="#EEF9FF";updateTarget("#B9D6B6");
   };
@@ -268,7 +272,7 @@
   };
   $("#sampleMarker").style.left=`${state.sample.x*100}%`;$("#sampleMarker").style.top=`${state.sample.y*100}%`;
   renderRecipe();renderSaved();renderPigments();
-  setTimeout(()=>$("#splashScreen").classList.add("is-hidden"),1500);
+  setTimeout(()=>$("#splashScreen").classList.add("is-hidden"),1800);
 })();
 </script>
 </body>
