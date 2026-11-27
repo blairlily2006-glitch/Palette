@@ -17,9 +17,15 @@
   <header class="topbar">
     <div class="brand"><img class="brand-mark" src="assets/palette-mascot.png" alt=""><span class="brand-name">Palette</span></div>
     <div class="top-actions" aria-label="照片操作">
-      <button class="top-action" id="quickUpload" aria-label="导入照片">＋</button>
-      <button class="top-action" id="saveRecipe" aria-label="保存配方">▣</button>
-      <button class="top-action" id="clearPhoto" aria-label="清空照片">×</button>
+      <button class="top-action" id="quickUpload" aria-label="导入照片">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="top-action" id="saveRecipe" aria-label="保存配方">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.75h12.2L20.25 6.8v13.45H3.75V3.75H5Z"/><path d="M7.25 4v5.5h9.5V4M7.25 20v-7h9.5v7"/></svg>
+      </button>
+      <button class="top-action" id="clearPhoto" aria-label="清空照片">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
     </div>
   </header>
   <main id="mainContent">
@@ -60,9 +66,15 @@
     </section>
   </main>
   <nav class="bottom-nav" aria-label="主导航">
-    <button class="active" data-view="home" aria-label="取色页"><span class="nav-icon nav-sample" aria-hidden="true"></span></button>
-    <button data-view="saved" aria-label="配色记录"><span class="nav-icon nav-record" aria-hidden="true"></span></button>
-    <button data-view="pigments" aria-label="我的颜料"><span class="nav-icon nav-pigments" aria-hidden="true"></span></button>
+    <button class="active" data-view="home" aria-label="取色页">
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle class="nav-sample" cx="12" cy="12" r="7"/></svg>
+    </button>
+    <button data-view="saved" aria-label="配色记录">
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect class="nav-record" x="4" y="3.5" width="16" height="17" rx="1.5"/><path class="nav-record-lines" d="M8 9h8M8 12.5h8M8 16h8"/></svg>
+    </button>
+    <button data-view="pigments" aria-label="我的颜料">
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle class="nav-pigments" cx="12" cy="12" r="8"/></svg>
+    </button>
   </nav>
 </div>
 <div class="toast" id="toast" role="status"></div>
@@ -187,8 +199,11 @@
     setLoading(true);if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);
     state.photoUrl=URL.createObjectURL(file);const image=$("#photo");
     image.onload=async()=>{
-      applyTheme(await extractPalette(image));$("#photoPanel").classList.add("has-image");
-      sampleAt(state.sample.x,state.sample.y);navigate("home");setTimeout(()=>setLoading(false),250);
+      $("#photoPanel").classList.add("has-image");
+      sampleAt(state.sample.x,state.sample.y);navigate("home");
+      try{applyTheme(await extractPalette(image))}
+      catch{toast("照片已载入，暂时无法提取主色")}
+      finally{setTimeout(()=>setLoading(false),250)}
     };
     image.onerror=()=>{setLoading(false);toast("照片无法载入，请重试")};
     image.src=state.photoUrl;event.target.value="";
@@ -208,7 +223,8 @@
   $("#photoPanel").onpointerup=event=>{if(samplingPointer===event.pointerId)samplingPointer=null};
   $("#photoPanel").onpointercancel=event=>{if(samplingPointer===event.pointerId)samplingPointer=null};
   $("#photoPanel").onclick=event=>{
-    if(event.target.closest("button,.sample-readout")||!state.photoUrl)return;
+    if(event.target.closest("button,.sample-readout"))return;
+    if(!state.photoUrl){$("#fileInput").click();return}
     const rect=event.currentTarget.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width,y=(event.clientY-rect.top)/rect.height;
     sampleAt(Math.max(0,Math.min(1,x)),Math.max(0,Math.min(1,y)));
   };

@@ -62,9 +62,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #718f9b;outline-offse
   border:1px solid rgba(255,255,255,.84);
   border-radius:50%;background:rgba(255,255,255,.48);
   box-shadow:0 3px 9px rgba(105,147,164,.1);
-  color:#718792;font-size:19px;line-height:1;
+  color:#718792;line-height:1;
+  display:grid;place-items:center;
   transition:transform .12s ease,background .18s ease;
 }
+.top-action svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .top-action:active{transform:scale(.94);background:#fff}
 main{position:relative;flex:1;min-height:0;overflow:hidden}
 .view{position:absolute;inset:0;display:none;min-height:0}
@@ -183,15 +185,13 @@ main{position:relative;flex:1;min-height:0;overflow:hidden}
   border:0;border-radius:50%;background:transparent;color:#89969c;
 }
 .bottom-nav button.active{color:#334a53}
-.nav-icon{width:18px;height:18px;display:block;position:relative}
-.nav-sample{width:11px;height:11px;border:1.5px solid currentColor;border-radius:50%}
-.active .nav-sample{border-width:4px}
-.nav-record{border:1.5px solid currentColor;border-radius:2px}
-.nav-record:before,.nav-record:after{content:"";position:absolute;left:3px;right:3px;height:1px;background:currentColor}
-.nav-record:before{top:5px;box-shadow:0 4px currentColor}
-.nav-record:after{top:13px}
-.nav-pigments{border:1.5px dashed currentColor;border-radius:50%}
-.active .nav-pigments{border-style:solid;border-width:2px}
+.nav-icon{width:20px;height:20px;display:block;overflow:visible}
+.nav-sample{fill:none;stroke:currentColor;stroke-width:2}
+.active .nav-sample{fill:currentColor;stroke-width:1}
+.nav-record{fill:none;stroke:currentColor;stroke-width:1.8}
+.nav-record-lines{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round}
+.nav-pigments{fill:none;stroke:currentColor;stroke-width:1.8;stroke-dasharray:3 2.5}
+.active .nav-pigments{stroke-dasharray:none;stroke-width:2.3}
 .splash-screen{
   position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:8px;background:var(--sky);

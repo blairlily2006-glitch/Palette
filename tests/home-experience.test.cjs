@@ -54,6 +54,22 @@ test("photo sampling, medium switching, saving, and pigment management remain wi
   assert.match(html, /#pigmentForm"\)\.onsubmit=/);
 });
 
+test("photo remains visible even when palette extraction fails", () => {
+  assert.match(html, /image\.onload=async\(\)=>\{[\s\S]*?\$\("#photoPanel"\)\.classList\.add\("has-image"\)[\s\S]*?try\{[\s\S]*?extractPalette\(image\)[\s\S]*?finally\{setTimeout\(\(\)=>setLoading\(false\),250\)\}/);
+  assert.match(css, /\.photo-panel\.has-image img\s*\{\s*display:\s*block/);
+  assert.match(html, /if\(!state\.photoUrl\)\{\$\("#fileInput"\)\.click\(\);return\}/);
+});
+
+test("top actions and bottom navigation use the prototype icon shapes", () => {
+  const topActions = html.match(/<div class="top-actions"[\s\S]*?<\/div>/)?.[0] ?? "";
+  assert.match(topActions, /id="saveRecipe"[^>]*aria-label="保存配方"[\s\S]*?<svg[\s\S]*?<\/svg>/);
+  assert.doesNotMatch(topActions, /▣/);
+  const nav = html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0] ?? "";
+  assert.equal((nav.match(/<svg/g) ?? []).length, 3);
+  assert.match(nav, /viewBox="0 0 24 24"/);
+  assert.doesNotMatch(nav, /nav-icon nav-/);
+});
+
 test("initial checked pigments match the prototype", () => {
   assert.match(html, /丙烯:\["ultra","lemon","sap"\]/);
 });
