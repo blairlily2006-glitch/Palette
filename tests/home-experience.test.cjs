@@ -42,6 +42,20 @@ test("all three bottom tabs are icon-only and switch views", () => {
   assert.match(html, /\$\$\("\.bottom-nav \[data-view\]"\)\.forEach\(button=>button\.onclick=\(\)=>navigate\(button\.dataset\.view\)\)/);
 });
 
+test("sampling tab icon is distinct from the pigments tab icon", () => {
+  const nav = html.match(/<nav class="bottom-nav"[\s\S]*?<\/nav>/)?.[0] ?? "";
+  assert.match(nav, /class="nav-sampler"/);
+  assert.match(nav, /class="nav-pigments"/);
+  assert.doesNotMatch(nav, /<circle class="nav-sampler"/);
+});
+
+test("empty photo canvas offers upload without showing a fake sample", () => {
+  assert.match(html, /class="upload-prompt"[\s\S]*?id="homeUpload"[\s\S]*?选择照片开始取色/);
+  assert.match(html, /id="homeUpload"[^>]*aria-label="从相册选择照片"/);
+  assert.match(css, /\.photo-panel:not\(\.has-image\) \.sample-marker/);
+  assert.match(css, /\.photo-panel:not\(\.has-image\) \.sample-readout/);
+});
+
 test("photo sampling, medium switching, saving, and pigment management remain wired", () => {
   assert.match(html, /image\.onload=async\(\)=>\{[\s\S]*?sampleAt\(state\.sample\.x,state\.sample\.y\);[\s\S]*?navigate\("home"\)/);
   assert.match(html, /\$\("#photoPanel"\)\.onclick=event=>/);

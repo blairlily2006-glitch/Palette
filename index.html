@@ -34,7 +34,13 @@
         <div class="home-showcase photo-panel" id="photoPanel">
           <img id="photo" alt="当前取色照片">
           <div class="photo-placeholder" id="photoPlaceholder">
-            <button class="upload-symbol" id="homeUpload" aria-label="从相册选择照片">＋</button>
+            <div class="upload-prompt">
+              <button class="upload-symbol" id="homeUpload" aria-label="从相册选择照片">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5"/></svg>
+              </button>
+              <strong>选择照片开始取色</strong>
+              <small>从相册导入一张照片</small>
+            </div>
           </div>
           <i class="sample-marker" id="sampleMarker" aria-hidden="true"></i>
           <div class="sample-readout" id="sampleReadout">
@@ -67,7 +73,7 @@
   </main>
   <nav class="bottom-nav" aria-label="主导航">
     <button class="active" data-view="home" aria-label="取色页">
-      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle class="nav-sample" cx="12" cy="12" r="7"/></svg>
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path class="nav-sampler" d="m14.3 5.7 4 4m-6.1-1.9-7.7 7.7a2 2 0 0 0-.5.9L3 21l4.6-1a2 2 0 0 0 .9-.5l7.7-7.7a4.2 4.2 0 0 0-6-6Z"/></svg>
     </button>
     <button data-view="saved" aria-label="配色记录">
       <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect class="nav-record" x="4" y="3.5" width="16" height="17" rx="1.5"/><path class="nav-record-lines" d="M8 9h8M8 12.5h8M8 16h8"/></svg>

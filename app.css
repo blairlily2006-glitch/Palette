@@ -85,7 +85,20 @@ main{position:relative;flex:1;min-height:0;overflow:hidden}
 .photo-placeholder{position:absolute;inset:0;background:var(--canvas)}
 .photo-placeholder[hidden]{display:none}
 .photo-panel.has-image .photo-placeholder{display:none}
-.upload-symbol{display:none}
+.upload-prompt{
+  position:absolute;inset:0;display:grid;align-content:center;justify-items:center;gap:8px;
+  color:#647982;text-align:center;
+}
+.upload-symbol{
+  width:48px;height:48px;margin-bottom:4px;display:grid;place-items:center;
+  border:1px solid rgba(255,255,255,.9);border-radius:50%;
+  background:#e8f2f5;color:#7898a4;box-shadow:0 4px 12px rgba(84,117,129,.08);
+}
+.upload-symbol svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.upload-prompt strong{font-size:13px;font-weight:650}
+.upload-prompt small{color:#97a5aa;font-size:10px}
+.photo-panel:not(.has-image) .sample-marker,
+.photo-panel:not(.has-image) .sample-readout{display:none}
 .sample-marker{
   position:absolute;z-index:3;width:18px;height:18px;
   border:2px solid #fff;border-radius:50%;pointer-events:none;
@@ -196,8 +209,8 @@ main{position:relative;flex:1;min-height:0;overflow:hidden}
 }
 .bottom-nav button.active{color:#334a53}
 .nav-icon{width:20px;height:20px;display:block;overflow:visible}
-.nav-sample{fill:none;stroke:currentColor;stroke-width:2}
-.active .nav-sample{fill:currentColor;stroke-width:1}
+.nav-sampler{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.active .nav-sampler{stroke-width:2.3}
 .nav-record{fill:none;stroke:currentColor;stroke-width:1.8}
 .nav-record-lines{fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round}
 .nav-pigments{fill:none;stroke:currentColor;stroke-width:1.8;stroke-dasharray:3 2.5}
