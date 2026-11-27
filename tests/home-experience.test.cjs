@@ -5,44 +5,57 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const html = readFileSync(path.join(root, "index.html"), "utf8");
+const css = readFileSync(path.join(root, "app.css"), "utf8");
+const source = `${html}\n${css}`;
 const homeStart = html.indexOf('<section class="view active" id="view-home">');
 const savedStart = html.indexOf('<section class="view" id="view-saved">', homeStart);
 const home = html.slice(homeStart, savedStart);
 
-test("home contains photo sampling and the complete recipe workflow", () => {
-  for (const id of ["photoPanel", "photo", "sampleMarker", "targetSwatch", "mediumSwitch", "targetLarge", "mixSwatch", "recipeList", "feedbackButtons", "saveRecipe"]) {
-    assert.match(home, new RegExp(`id="${id}"`), `${id} should live on the home screen`);
+test("Figma frames map to a splash, three tabs, and an inline recipe", () => {
+  for (const id of ["splashScreen", "photoPanel", "photo", "sampleMarker", "mediumSwitch", "recipeList", "feedbackButtons", "saveRecipe", "view-saved", "view-pigments"]) {
+    assert.match(html, new RegExp(`id="${id}"`), `${id} should be present`);
   }
-  assert.equal(/id="view-(sample|result)"/.test(html), false, "sampling and recipe must not be separate views");
+  assert.equal(/id="view-(sample|result)"/.test(html), false, "photo sampling and recipe stay on one page");
+  assert.match(html, /class="[^"]*home-recipe[^"]*"[^>]*id="recipePanel"/);
+  assert.match(html, /setTimeout\(\(\)=>\$\("#splashScreen"\)\.classList\.add\("is-hidden"\),1500\)/);
 });
 
-test("photo and palette selection update the recipe without navigating away", () => {
+test("photo, sample, medium, and feedback stay connected to live recipe updates", () => {
   assert.match(html, /img\.onload=async\(\)=>\{[\s\S]*?sampleAt\(\.5,\.5\);[\s\S]*?navigate\("home"\)/);
+  assert.match(html, /#photoPanel"\)\.onclick=e=>/);
+  assert.match(html, /#mediumSwitch"\)\.onclick=e=>/);
+  assert.match(html, /#feedbackButtons"\)\.onclick=e=>/);
   assert.match(html, /#paletteGrid"\)\.onclick=e=>\{[\s\S]*?updateTarget\(chip\.dataset\.paletteColor\)/);
-  assert.equal(/#paletteGrid"\)\.onclick=e=>\{[^}]*navigate\(/.test(html), false);
 });
 
-test("brand name, app icon, and Chinese line-breaking rules are present", () => {
-  assert.match(html, /<title>调色盘/);
-  assert.match(html, /<span>调色盘<\/span>/);
-  assert.match(html, /rel="icon"[^>]*href="icon\.svg"/);
-  assert.ok(existsSync(path.join(root, "icon.svg")), "icon.svg should exist");
-  assert.match(html, /word-break:\s*keep-all/);
+test("clearing a photo lets the sampling marker appear on the next upload", () => {
+  assert.match(html, /\$\("#photoPanel"\)\.classList\.remove\("has-image"\)/);
+  assert.doesNotMatch(html, /\$\("#sampleMarker"\)\.style\.display="none"/);
 });
 
-test("mobile shell uses the requested iPhone proportions", () => {
+test("Figma brand, mascot asset, and Chinese line-breaking rule are used", () => {
+  assert.match(html, /<title>Palette<\/title>/);
+  assert.match(html, /<meta name="theme-color" content="#EEF9FF">/i);
+  assert.match(html, /<span class="brand-name">Palette<\/span>/);
+  assert.match(html, /src="assets\/palette-mascot\.png"/);
+  assert.match(html, /rel="icon"[^>]*href="assets\/palette-mascot\.png"/);
+  assert.ok(existsSync(path.join(root, "assets", "palette-mascot.png")), "Figma mascot asset should exist");
+  assert.match(css, /word-break:\s*keep-all/);
+  assert.match(html, /--bg-top:\s*#eef9ff/i);
+});
+
+test("mobile shell uses a 302 by 652 frame and scales proportionally", () => {
   assert.match(html, /id="app"/);
-  assert.match(html, /#app\{[^}]*width:100%[^}]*max-width:430px[^}]*height:100dvh[^}]*overflow:hidden[^}]*position:relative/);
-  assert.match(html, /@media\(min-width:481px\)[\s\S]*?#app\{[^}]*width:390px[^}]*height:844px[^}]*border-radius:44px/);
-  assert.match(html, /@media\(max-width:480px\)[\s\S]*?#app\{[^}]*border-radius:0[^}]*box-shadow:none/);
-  assert.match(html, /body\{[^}]*overflow:hidden/);
-  assert.match(html, /main\{[^}]*overflow-y:auto/);
+  assert.match(css, /@media\(max-width:480px\)\{[^}]*#app\{[^}]*width:min\(100vw,calc\(100dvh\s*\*\s*302\s*\/\s*652\)\)[^}]*aspect-ratio:302\s*\/\s*652/);
+  assert.match(css, /#app\{[^}]*overflow:hidden[^}]*position:relative/);
+  assert.match(css, /body\{[^}]*overflow:hidden/);
+  assert.match(css, /main\{[^}]*overflow-y:auto/);
 });
 
-test("photo and palette sizing stay compact and proportional", () => {
-  assert.match(html, /#app \.home-showcase\.photo-panel\{[^}]*width:92%[^}]*aspect-ratio:3\s*\/\s*4/);
-  assert.match(html, /#app \.home-showcase\.photo-panel img\{[^}]*object-fit:cover/);
-  assert.match(html, /#app \.palette-panel\{[^}]*padding:10px 12px 12px/);
-  assert.match(html, /#app \.palette-grid\{[^}]*gap:8px 7px/);
-  assert.match(html, /#app \.palette-chip i\{[^}]*width:40px[^}]*height:40px/);
+test("sampling canvas follows the Figma rounded portrait proportion", () => {
+  assert.match(css, /\.photo-panel\{[^}]*aspect-ratio:3\s*\/\s*4/);
+  assert.match(css, /\.photo-panel img\{[^}]*object-fit:cover/);
+  assert.match(css, /\.recipe-panel\{/);
+  assert.match(css, /#fffbfb/i);
+  assert.match(css, /#edfaff/i);
 });

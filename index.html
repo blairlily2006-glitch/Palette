@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#183b32">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">
-  <title>调色盘 - 把自然调进画布</title>
+  <meta name="theme-color" content="#EEF9FF">
+  <link rel="icon" type="image/png" href="assets/palette-mascot.png">
+  <title>Palette</title>
   <style>
     :root{
       color-scheme:light;
@@ -126,13 +126,13 @@
     @media(prefers-reduced-motion:reduce){.home-showcase img{animation:none}}
 
     /* Dynamic photo theme and interaction redesign */
-    @property --bg-top{syntax:"<color>";inherits:true;initial-value:#fbf7f5}
-    @property --bg-bottom{syntax:"<color>";inherits:true;initial-value:#e8d9df}
+    @property --bg-top{syntax:"<color>";inherits:true;initial-value:#eef9ff}
+    @property --bg-bottom{syntax:"<color>";inherits:true;initial-value:#e4f0f5}
     @property --ink{syntax:"<color>";inherits:true;initial-value:#4b2930}
     @property --glass-tint{syntax:"<color>";inherits:true;initial-value:#fffaf8}
     @property --accent{syntax:"<color>";inherits:true;initial-value:#7f4252}
     :root{
-      --bg-top:#fbf7f5;--bg-bottom:#e8d9df;--ink:#4b2930;--ink-soft:#725c62;
+      --bg-top:#eef9ff;--bg-bottom:#e4f0f5;--ink:#4b2930;--ink-soft:#725c62;
       --glass-tint:#fffaf8;--accent:#7f4252;--accent-soft:#e9c8d2;
       --swatch-1:#d9b7c0;--swatch-2:#c9d4c5;--swatch-3:#b4c4d5;
       --swatch-4:#e4c89b;--swatch-5:#9eaab7;--swatch-6:#b9a3b7;
@@ -263,6 +263,7 @@
       #app{border-radius:0;box-shadow:none}
     }
   </style>
+  <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <svg aria-hidden="true" width="0" height="0" style="position:absolute">
@@ -273,12 +274,17 @@
   </filter>
 </svg>
 <div class="app" id="app">
+  <div class="splash-screen" id="splashScreen" aria-label="Palette">
+    <img src="assets/palette-mascot.png" alt="">
+    <span class="splash-wordmark">Palette</span>
+  </div>
   <header class="topbar">
-    <div class="brand"><img class="brand-mark" src="icon.svg" alt=""><span>调色盘</span></div>
+    <div class="brand"><img class="brand-mark" src="assets/palette-mascot.png" alt=""><span class="brand-name">Palette</span></div>
     <button class="top-action top-back" id="backButton" aria-label="返回上一页" hidden>‹</button>
     <div class="top-actions" aria-label="工具">
       <button class="top-action" id="quickUpload" aria-label="换一张照片">＋</button>
       <button class="top-action" id="exportAction" aria-label="导出当前色卡">↓</button>
+      <button class="top-action" id="clearPhoto" aria-label="清空照片">×</button>
       <button class="top-action" id="settingsAction" aria-label="打开设置">⚙</button>
     </div>
     <span id="modeLabel" style="font-size:10px;color:#9c9299">本地创作</span>
@@ -287,20 +293,24 @@
     <section class="view active" id="view-home">
       <div class="home">
         <!-- 改动：照片取样区域与配方结果共处首页，选色无需进入独立页面。 -->
-        <div class="home-showcase photo-panel has-image" id="photoPanel">
-          <img id="photo" src="forest-reference.jpg" alt="阳光穿过树叶的林间景色">
+        <div class="home-showcase photo-panel" id="photoPanel">
+          <img id="photo" alt="当前取色照片">
           <i class="sample-marker" id="sampleMarker" aria-hidden="true"></i>
+          <div class="photo-placeholder" id="photoPlaceholder">
+            <i class="upload-symbol" aria-hidden="true">＋</i>
+            <strong>导入一张照片</strong>
+            <span>点击画面任意位置，提取你想调和的颜色</span>
+            <button class="add-photo" id="homeUpload" aria-label="从相册添加照片">从相册选择</button>
+          </div>
           <div class="showcase-topline"><span>点击照片取样</span><span aria-hidden="true">✳</span></div>
-          <div class="showcase-caption"><small>FIELD NOTES　/　NATURE</small><strong>光落在树影之间</strong></div>
-          <button class="add-photo" id="homeUpload" aria-label="从相册添加照片"><span>＋</span><span>从照片取色</span></button>
-          <div class="add-caption">选择一张写生参考照片</div>
+          <div class="showcase-caption"><small>PALETTE　/　COLOR STUDY</small><strong>取一抹灵感，调成手边的颜色</strong></div>
           <div class="palette-panel" id="homePalette" aria-label="照片主色">
             <div class="palette-handle" aria-hidden="true"></div>
             <div class="palette-grid" id="paletteGrid"></div>
           </div>
         </div>
         <input id="fileInput" type="file" accept="image/*" hidden>
-        <div class="home-recipe">
+        <div class="home-recipe recipe-panel" id="recipePanel">
           <div class="sample-readout"><i class="sample-swatch" id="targetSwatch"></i><span><strong>当前取样色</strong><small id="targetHex">#E5B8D0</small></span><button id="copyHex">复制色值</button></div>
           <div class="medium-switch" id="mediumSwitch"><button class="active" data-medium="水彩">水彩</button><button data-medium="丙烯">丙烯</button><button data-medium="油画">油画</button></div>
           <div class="result-colors">
@@ -320,7 +330,7 @@
       </div>
     </section>
     <section class="view" id="view-saved">
-      <div class="page-head"><div><h1>配色记录</h1><p>保存过的颜色与混合比例</p></div><span class="count" id="savedCount"></span></div>
+      <div class="page-head"><div><h1>配色记录</h1><p>保存过的颜色和混合比例</p></div><span class="count" id="savedCount"></span></div>
       <div class="record-list" id="savedList"></div>
     </section>
     <section class="view" id="view-pigments">
@@ -460,12 +470,13 @@
     if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);
     state.photoUrl=URL.createObjectURL(f);
     const img=$("#photo");
-    img.onload=async()=>{const colors=await extractPalette(img);applyTheme(colors);sampleAt(.5,.5);navigate("home");setTimeout(()=>setLoading(false),350);toast("照片已载入，点击画面取色")};
+    img.onload=async()=>{const colors=await extractPalette(img);applyTheme(colors);$("#photoPanel").classList.add("has-image");sampleAt(.5,.5);navigate("home");setTimeout(()=>setLoading(false),350);toast("照片已载入，点击画面取色")};
     img.src=state.photoUrl;
     e.target.value="";
   };
   function sampleAt(x,y){const panel=$("#photoPanel"),img=$("#photo"),rect=panel.getBoundingClientRect();$("#sampleMarker").style.left=`${x*rect.width}px`;$("#sampleMarker").style.top=`${y*rect.height}px`;try{const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);const scale=Math.max(rect.width/c.width,rect.height/c.height),w=c.width*scale,h=c.height*scale,ox=(rect.width-w)/2,oy=(rect.height-h)/2,px=Math.max(0,Math.min(c.width-1,Math.floor((x*rect.width-ox)/scale))),py=Math.max(0,Math.min(c.height-1,Math.floor((y*rect.height-oy)/scale))),d=ctx.getImageData(px,py,1,1).data;updateTarget(hex([d[0],d[1],d[2]]))}catch{toast("无法读取图片颜色，请重新选择")}}
   $("#photoPanel").onclick=e=>{if(e.target.closest("button,.palette-panel"))return;if(!state.photoUrl)return;const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,ripple=document.createElement("i");ripple.className="sample-ripple";ripple.style.left=`${x}px`;ripple.style.top=`${y}px`;e.currentTarget.appendChild(ripple);setTimeout(()=>ripple.remove(),600);sampleAt(x/r.width,y/r.height)};
+  $("#clearPhoto").onclick=()=>{if(state.photoUrl.startsWith("blob:"))URL.revokeObjectURL(state.photoUrl);state.photoUrl="";$("#photo").removeAttribute("src");$("#photoPanel").classList.remove("has-image");applyTheme(fallbackPalette());updateTarget("#B9D6B6");toast("已清空照片")};
   $("#paletteGrid").onclick=e=>{const chip=e.target.closest("[data-palette-color]");if(!chip)return;e.stopPropagation();updateTarget(chip.dataset.paletteColor);$("#sampleMarker").style.left="50%";$("#sampleMarker").style.top="50%"};
   $("#mediumSwitch").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;$$("[data-medium]",$("#mediumSwitch")).forEach(x=>x.classList.toggle("active",x===b));renderRecipe()};
   $("#pigmentMedium").onclick=e=>{const b=e.target.closest("[data-medium]");if(!b)return;state.medium=b.dataset.medium;renderPigments();renderRecipe()};
@@ -503,10 +514,9 @@
     a.href=url;a.download=`palette-${state.target.slice(1)}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);toast("色卡已导出");
   };
   applySettings();
+  setTimeout(()=>$("#splashScreen").classList.add("is-hidden"),1500);
   renderPalette(fallbackPalette());
   const initialImage=$("#photo");
-  const initializePhoto=()=>{state.photoUrl=initialImage.currentSrc||initialImage.src;extractPalette(initialImage).then(colors=>{applyTheme(colors);sampleAt(.5,.5)})};
-  if(initialImage.complete&&initialImage.naturalWidth)initializePhoto();else initialImage.onload=initializePhoto;
   renderPigments();renderSaved();renderRecipe();updateTarget(state.target);
 })();
 </script>
